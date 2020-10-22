@@ -15,6 +15,7 @@
 import AVFoundation
 import UIKit
 import os
+import DJISDK
 
 class ViewController: UIViewController {
   // MARK: Storyboards Connections
@@ -31,6 +32,8 @@ class ViewController: UIViewController {
   @IBOutlet weak var threadCountStepper: UIStepper!
 
   @IBOutlet weak var delegatesControl: UISegmentedControl!
+    
+  @IBOutlet weak var bluetoothConnectorButton: UIButton!
 
   // MARK: ModelDataHandler traits
   var threadCount: Int = Constants.defaultThreadCount
@@ -41,7 +44,7 @@ class ViewController: UIViewController {
   private var inferencedData: InferencedData?
 
   // Minimum score to render the result.
-  private let minimumScore: Float = 0.5
+  private let minimumScore: Float = 0.2
 
   // Relative location of `overlayView` to `previewView`.
   private var overlayViewFrame: CGRect?
@@ -54,6 +57,9 @@ class ViewController: UIViewController {
 
   // Handles all data preprocessing and makes calls to run inference.
   private var modelDataHandler: ModelDataHandler?
+    
+    
+ weak var appDelegate: AppDelegate! = UIApplication.shared.delegate as? AppDelegate
 
   // MARK: View Handling Methods
   override func viewDidLoad() {
@@ -96,12 +102,19 @@ class ViewController: UIViewController {
         animated: false)
     }
     delegatesControl.selectedSegmentIndex = 0
+    self.bluetoothConnectorButton.isEnabled = true;
+    
   }
 
+    
+    
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
 
     cameraCapture.checkCameraConfigurationAndStartSession()
+    
+    
+    
   }
 
   override func viewWillDisappear(_ animated: Bool) {
@@ -165,6 +178,46 @@ class ViewController: UIViewController {
 
     self.present(alert, animated: true)
   }
+}
+
+func productConnected() {
+    guard let newProduct = DJISDKManager.product() else {
+        NSLog("Product is connected but DJISDKManager.product is nil -> something is wrong")
+        return;
+    }
+
+    //Updates the product's model
+    //self.productModel.text = "Model: \((newProduct.model)!)"
+    //self.productModel.isHidden = false
+    
+    //Updates the product's firmware version - COMING SOON
+    newProduct.getFirmwarePackageVersion{ (version:String?, error:Error?) -> Void in
+        
+        //self.productFirmwarePackageVersion.text = "Firmware Package Version: \(version ?? "Unknown")"
+        
+        if let _ = error {
+            //self.productFirmwarePackageVersion.isHidden = true
+        }else{
+            //self.productFirmwarePackageVersion.isHidden = false
+        }
+        
+        NSLog("Firmware package version is: \(version ?? "Unknown")")
+    }
+    
+    //Updates the product's connection status
+    //self.productConnectionStatus.text = "Status: Product Connected"
+    
+    //self.openComponents.isEnabled = true;
+    //self.openComponents.alpha = 1.0;
+    NSLog("Product Connected")
+}
+
+func productDisconnected() {
+    //self.productConnectionStatus.text = "Status: No Product Connected"
+
+    //self.openComponents.isEnabled = false;
+    //self.openComponents.alpha = 0.8;
+    NSLog("Product Disconnected")
 }
 
 // MARK: - CameraFeedManagerDelegate Methods

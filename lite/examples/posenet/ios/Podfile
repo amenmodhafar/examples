@@ -7,4 +7,5 @@ target 'PoseNet' do
 
   # Pods for PoseNet
    pod 'TensorFlowLiteSwift', '~> 0.0.1-nightly'
+   pod 'DJI-SDK-iOS', '~> 4.13.1'
 end

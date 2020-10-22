@@ -24,9 +24,9 @@ class OverlayView: UIView {
     for dot in dots {
       drawDot(of: dot)
     }
-    for line in lines {
+    /*for line in lines {
       drawLine(of: line)
-    }
+    }*/
   }
 
   func drawDot(of dot: CGPoint) {
@@ -58,6 +58,6 @@ class OverlayView: UIView {
 }
 
 private enum Traits {
-  static let dot = (radius: CGFloat(5), color: UIColor.orange)
-  static let line = (width: CGFloat(1.0), color: UIColor.orange)
+  static let dot = (radius: CGFloat(8), color: UIColor.white)
+    static let line = (width: CGFloat(1.0), color: UIColor.clear)
 }

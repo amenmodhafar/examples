@@ -256,7 +256,7 @@ class ModelDataHandler {
       bodyPartToDotMap[part] = position
       result.dots.append(position)
     }
-
+    
     do {
       try result.lines = BodyPart.lines.map { map throws -> Line in
         guard let from = bodyPartToDotMap[map.from] else {
