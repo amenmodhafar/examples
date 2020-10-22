@@ -32,7 +32,7 @@ from tensorflow_examples.lite.model_maker.core.task.metadata_writers.text_classi
 
 
 def create(train_data,
-           model_spec=ms.AverageWordVecModelSpec(),
+           model_spec='average_word_vec',
            validation_data=None,
            batch_size=None,
            epochs=3,
@@ -52,6 +52,7 @@ def create(train_data,
   Returns:
     TextClassifier
   """
+  model_spec = ms.get(model_spec)
   if compat.get_tf_behavior() not in model_spec.compat_tf_versions:
     raise ValueError('Incompatible versions. Expect {}, but got {}.'.format(
         model_spec.compat_tf_versions, compat.get_tf_behavior()))
@@ -143,11 +144,14 @@ class TextClassifier(classification_model.ClassificationModel):
     validation_input_fn, validation_steps = self._get_input_fn_and_steps(
         validation_data, batch_size, is_training=False)
 
-    self.model = self.model_spec.run_classifier(train_input_fn,
-                                                validation_input_fn, epochs,
-                                                steps_per_epoch,
-                                                validation_steps,
-                                                self.num_classes)
+    self.model = self.model_spec.run_classifier(
+        train_input_fn,
+        validation_input_fn,
+        epochs,
+        steps_per_epoch,
+        validation_steps,
+        self.num_classes,
+        callbacks=self._keras_callbacks(model_dir=self.model_spec.model_dir))
 
     return self.model
 

@@ -37,7 +37,7 @@ class CustomModel(abc.ABC):
 
     Args:
       model_spec: Specification for the model.
-      shuffle: Whether the data should be shuffled.
+      shuffle: Whether the training data should be shuffled.
     """
     self.model_spec = model_spec
     self.shuffle = shuffle
@@ -215,3 +215,12 @@ class CustomModel(abc.ABC):
     """
     model_util.export_tflite(self.model, tflite_filepath, quantization_config,
                              self._gen_dataset)
+
+  def _keras_callbacks(self, model_dir):
+    """Returns a list of default keras callbacks for `model.fit`."""
+    summary_dir = os.path.join(model_dir, 'summaries')
+    summary_callback = tf.keras.callbacks.TensorBoard(summary_dir)
+    checkpoint_path = os.path.join(model_dir, 'checkpoint')
+    checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
+        checkpoint_path, save_weights_only=True)
+    return [summary_callback, checkpoint_callback]

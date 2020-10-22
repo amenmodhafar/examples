@@ -99,44 +99,84 @@ class ImageModelSpec(object):
     self.input_image_shape = input_image_shape
 
 
-mobilenet_v2_spec = ImageModelSpec(
-    uri='https://tfhub.dev/google/tf2-preview/mobilenet_v2/feature_vector/4',
-    compat_tf_versions=2,
-    name='mobilenet_v2')
+def _dict_with_default(default_dict, **updates):
+  default_dict.update(updates)
+  return default_dict
 
-resnet_50_spec = ImageModelSpec(
-    uri='https://tfhub.dev/google/imagenet/resnet_v2_50/feature_vector/4',
-    compat_tf_versions=2,
-    name='resnet_50')
 
-efficientnet_lite0_spec = ImageModelSpec(
-    uri='https://tfhub.dev/tensorflow/efficientnet/lite0/feature-vector/2',
-    compat_tf_versions=[1, 2],
-    name='efficientnet_lite0')
+def mobilenet_v2_spec(**kwargs):
+  args = _dict_with_default(
+      default_dict=dict(
+          uri='https://tfhub.dev/google/tf2-preview/mobilenet_v2/feature_vector/4',
+          compat_tf_versions=2,
+          name='mobilenet_v2'),
+      **kwargs)
+  return ImageModelSpec(**args)
 
-efficientnet_lite1_spec = ImageModelSpec(
-    uri='https://tfhub.dev/tensorflow/efficientnet/lite1/feature-vector/2',
-    compat_tf_versions=[1, 2],
-    input_image_shape=[240, 240],
-    name='efficientnet_lite1')
 
-efficientnet_lite2_spec = ImageModelSpec(
-    uri='https://tfhub.dev/tensorflow/efficientnet/lite2/feature-vector/2',
-    compat_tf_versions=[1, 2],
-    input_image_shape=[260, 260],
-    name='efficientnet_lite2')
+def resnet_50_spec(**kwargs):
+  args = _dict_with_default(
+      default_dict=dict(
+          uri='https://tfhub.dev/google/imagenet/resnet_v2_50/feature_vector/4',
+          compat_tf_versions=2,
+          name='resnet_50'),
+      **kwargs)
+  return ImageModelSpec(**args)
 
-efficientnet_lite3_spec = ImageModelSpec(
-    uri='https://tfhub.dev/tensorflow/efficientnet/lite3/feature-vector/2',
-    compat_tf_versions=[1, 2],
-    input_image_shape=[280, 280],
-    name='efficientnet_lite3')
 
-efficientnet_lite4_spec = ImageModelSpec(
-    uri='https://tfhub.dev/tensorflow/efficientnet/lite4/feature-vector/2',
-    compat_tf_versions=[1, 2],
-    input_image_shape=[300, 300],
-    name='efficientnet_lite4')
+def efficientnet_lite0_spec(**kwargs):
+  args = _dict_with_default(
+      default_dict=dict(
+          uri='https://tfhub.dev/tensorflow/efficientnet/lite0/feature-vector/2',
+          compat_tf_versions=[1, 2],
+          name='efficientnet_lite0'),
+      **kwargs)
+  return ImageModelSpec(**args)
+
+
+def efficientnet_lite1_spec(**kwargs):
+  args = _dict_with_default(
+      default_dict=dict(
+          uri='https://tfhub.dev/tensorflow/efficientnet/lite1/feature-vector/2',
+          compat_tf_versions=[1, 2],
+          input_image_shape=[240, 240],
+          name='efficientnet_lite1'),
+      **kwargs)
+  return ImageModelSpec(**args)
+
+
+def efficientnet_lite2_spec(**kwargs):
+  args = _dict_with_default(
+      default_dict=dict(
+          uri='https://tfhub.dev/tensorflow/efficientnet/lite2/feature-vector/2',
+          compat_tf_versions=[1, 2],
+          input_image_shape=[260, 260],
+          name='efficientnet_lite2'),
+      **kwargs)
+  args.update(**kwargs)
+  return ImageModelSpec(**args)
+
+
+def efficientnet_lite3_spec(**kwargs):
+  args = _dict_with_default(
+      default_dict=dict(
+          uri='https://tfhub.dev/tensorflow/efficientnet/lite3/feature-vector/2',
+          compat_tf_versions=[1, 2],
+          input_image_shape=[280, 280],
+          name='efficientnet_lite3'),
+      **kwargs)
+  return ImageModelSpec(**args)
+
+
+def efficientnet_lite4_spec(**kwargs):
+  args = _dict_with_default(
+      default_dict=dict(
+          uri='https://tfhub.dev/tensorflow/efficientnet/lite4/feature-vector/2',
+          compat_tf_versions=[1, 2],
+          input_image_shape=[300, 300],
+          name='efficientnet_lite4'),
+      **kwargs)
+  return ImageModelSpec(**args)
 
 
 class AverageWordVecModelSpec(object):
@@ -147,8 +187,6 @@ class AverageWordVecModelSpec(object):
 
   compat_tf_versions = _get_compat_tf_versions(2)
   need_gen_vocab = True
-  default_training_epochs = 2
-  default_batch_size = 32
   convert_from_saved_model_tf2 = False
 
   def __init__(self,
@@ -157,7 +195,10 @@ class AverageWordVecModelSpec(object):
                wordvec_dim=16,
                lowercase=True,
                dropout_rate=0.2,
-               name='AverageWordVec'):
+               name='AverageWordVec',
+               default_training_epochs=2,
+               default_batch_size=32,
+               model_dir=None):
     """Initialze a instance with preprocessing and model paramaters.
 
     Args:
@@ -168,6 +209,9 @@ class AverageWordVecModelSpec(object):
         preprocessing.
       dropout_rate: The rate for dropout.
       name: Name of the object.
+      default_training_epochs: Default training epochs for training.
+      default_batch_size: Default batch size for training.
+      model_dir: The location of the model checkpoint files.
     """
     self.num_words = num_words
     self.seq_len = seq_len
@@ -175,6 +219,12 @@ class AverageWordVecModelSpec(object):
     self.lowercase = lowercase
     self.dropout_rate = dropout_rate
     self.name = name
+    self.default_training_epochs = default_training_epochs
+    self.default_batch_size = default_batch_size
+
+    self.model_dir = model_dir
+    if self.model_dir is None:
+      self.model_dir = tempfile.mkdtemp()
 
   def get_name_to_features(self):
     """Gets the dictionary describing the features."""
@@ -228,7 +278,7 @@ class AverageWordVecModelSpec(object):
     return model
 
   def run_classifier(self, train_input_fn, validation_input_fn, epochs,
-                     steps_per_epoch, validation_steps, num_classes):
+                     steps_per_epoch, validation_steps, num_classes, **kwargs):
     """Creates classifier and runs the classifier training."""
     if epochs is None:
       epochs = self.default_training_epochs
@@ -246,7 +296,8 @@ class AverageWordVecModelSpec(object):
         epochs=epochs,
         steps_per_epoch=steps_per_epoch,
         validation_data=validation_ds,
-        validation_steps=validation_steps)
+        validation_steps=validation_steps,
+        **kwargs)
 
     return model
 
@@ -396,7 +447,6 @@ class BertModelSpec(object):
 
   compat_tf_versions = _get_compat_tf_versions(2)
   need_gen_vocab = False
-  default_batch_size = 32
 
   def __init__(
       self,
@@ -414,7 +464,8 @@ class BertModelSpec(object):
       is_tf2=True,
       convert_from_saved_model_tf2=False,
       name='Bert',
-      tflite_input_name=None):
+      tflite_input_name=None,
+      default_batch_size=32):
     """Initialze an instance with model paramaters.
 
     Args:
@@ -442,6 +493,7 @@ class BertModelSpec(object):
         2.x.
       name: The name of the object.
       tflite_input_name: Dict, input names for the TFLite model.
+      default_batch_size: Default batch size for training.
     """
     if compat.get_tf_behavior() not in self.compat_tf_versions:
       raise ValueError('Incompatible versions. Expect {}, but got {}.'.format(
@@ -567,7 +619,7 @@ class BertClassifierModelSpec(BertModelSpec):
     return bert_model
 
   def run_classifier(self, train_input_fn, validation_input_fn, epochs,
-                     steps_per_epoch, validation_steps, num_classes):
+                     steps_per_epoch, validation_steps, num_classes, **kwargs):
     """Creates classifier and runs the classifier training."""
 
     warmup_steps = int(epochs * steps_per_epoch * 0.1)
@@ -584,19 +636,13 @@ class BertClassifierModelSpec(BertModelSpec):
                                                 warmup_steps)
       bert_model = self.create_model(num_classes, optimizer)
 
-    summary_dir = os.path.join(self.model_dir, 'summaries')
-    summary_callback = tf.keras.callbacks.TensorBoard(summary_dir)
-    checkpoint_path = os.path.join(self.model_dir, 'checkpoint')
-    checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
-        checkpoint_path, save_weights_only=True)
-
     bert_model.fit(
         x=training_dataset,
         validation_data=evaluation_dataset,
         steps_per_epoch=steps_per_epoch,
         epochs=epochs,
         validation_steps=validation_steps,
-        callbacks=[summary_callback, checkpoint_callback])
+        **kwargs)
 
     return bert_model
 
@@ -755,6 +801,7 @@ class BertQAModelSpec(BertModelSpec):
       tflite_input_name=None,
       tflite_output_name=None,
       init_from_squad_model=False,
+      default_batch_size=32,
       name='Bert'):
     """Initialze an instance with model paramaters.
 
@@ -789,6 +836,7 @@ class BertQAModelSpec(BertModelSpec):
       tflite_output_name: Dict, output names for the TFLite model.
       init_from_squad_model: boolean, whether to initialize from the model that
         is already retrained on Squad 1.1.
+      default_batch_size: Default batch size for training.
       name: Name of the object.
     """
     super(BertQAModelSpec,
@@ -796,7 +844,7 @@ class BertQAModelSpec(BertModelSpec):
                          initializer_range, learning_rate,
                          distribution_strategy, num_gpus, tpu, trainable,
                          do_lower_case, is_tf2, convert_from_saved_model_tf2,
-                         name, tflite_input_name)
+                         name, tflite_input_name, default_batch_size)
     self.query_len = query_len
     self.doc_stride = doc_stride
     self.predict_batch_size = predict_batch_size
@@ -878,7 +926,7 @@ class BertQAModelSpec(BertModelSpec):
           is_tf2=self.is_tf2)
       return qa_model
 
-  def train(self, train_input_fn, epochs, steps_per_epoch):
+  def train(self, train_input_fn, epochs, steps_per_epoch, **kwargs):
     """Run bert QA training."""
     warmup_steps = int(epochs * steps_per_epoch * 0.1)
 
@@ -898,12 +946,6 @@ class BertQAModelSpec(BertModelSpec):
       bert_model.compile(
           optimizer=optimizer, loss=_loss_fn, loss_weights=[0.5, 0.5])
 
-    summary_dir = os.path.join(self.model_dir, 'summaries')
-    summary_callback = tf.keras.callbacks.TensorBoard(summary_dir)
-    checkpoint_path = os.path.join(self.model_dir, 'checkpoint')
-    checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
-        checkpoint_path, save_weights_only=True)
-
     if not bert_model.trainable_variables:
       tf.compat.v1.logging.warning(
           'Trainable variables in the model are empty.')
@@ -913,7 +955,7 @@ class BertQAModelSpec(BertModelSpec):
         x=training_dataset,
         steps_per_epoch=steps_per_epoch,
         epochs=epochs,
-        callbacks=[summary_callback, checkpoint_callback])
+        **kwargs)
 
     return bert_model
 
@@ -1067,37 +1109,71 @@ _MOBILEBERT_TFLITE_OUTPUT_NAME = {
     'end_logits': 'StatefulPartitionedCall:0'
 }
 
-mobilebert_classifier_spec = BertClassifierModelSpec(
-    uri='https://tfhub.dev/google/mobilebert/uncased_L-24_H-128_B-512_A-4_F-4_OPT/1',
-    is_tf2=False,
-    distribution_strategy='off',
-    convert_from_saved_model_tf2=True,
-    name='MobileBert',
-    tflite_input_name=_MOBILEBERT_TFLITE_INPUT_NAME)
-mobilebert_classifier_spec.default_batch_size = 48
 
-mobilebert_qa_spec = BertQAModelSpec(
-    uri='https://tfhub.dev/google/mobilebert/uncased_L-24_H-128_B-512_A-4_F-4_OPT/1',
-    is_tf2=False,
-    distribution_strategy='off',
-    convert_from_saved_model_tf2=True,
-    learning_rate=5e-05,
-    name='MobileBert',
-    tflite_input_name=_MOBILEBERT_TFLITE_INPUT_NAME,
-    tflite_output_name=_MOBILEBERT_TFLITE_OUTPUT_NAME)
-mobilebert_qa_spec.default_batch_size = 48
+def average_word_vec_spec(**kwargs):
+  return AverageWordVecModelSpec(**kwargs)
 
-mobilebert_qa_squad_spec = BertQAModelSpec(
-    uri='https://tfhub.dev/google/mobilebert/uncased_L-24_H-128_B-512_A-4_F-4_OPT/squadv1/1',
-    is_tf2=False,
-    distribution_strategy='off',
-    convert_from_saved_model_tf2=True,
-    learning_rate=5e-05,
-    name='MobileBert',
-    tflite_input_name=_MOBILEBERT_TFLITE_INPUT_NAME,
-    tflite_output_name=_MOBILEBERT_TFLITE_OUTPUT_NAME,
-    init_from_squad_model=True)
-mobilebert_qa_squad_spec.default_batch_size = 48
+
+def bert_spec(**kwargs):
+  return BertModelSpec(**kwargs)
+
+
+def bert_classifier_spec(**kwargs):
+  return BertClassifierModelSpec(**kwargs)
+
+
+def bert_qa_spec(**kwargs):
+  return BertQAModelSpec(**kwargs)
+
+
+def mobilebert_classifier_spec(**kwargs):
+  """Model specification for MobileBERT in the text classification task."""
+  args = _dict_with_default(
+      default_dict=dict(
+          uri='https://tfhub.dev/google/mobilebert/uncased_L-24_H-128_B-512_A-4_F-4_OPT/1',
+          is_tf2=False,
+          distribution_strategy='off',
+          convert_from_saved_model_tf2=True,
+          name='MobileBert',
+          tflite_input_name=_MOBILEBERT_TFLITE_INPUT_NAME,
+          default_batch_size=48),
+      **kwargs)
+  return BertClassifierModelSpec(**args)
+
+
+def mobilebert_qa_spec(**kwargs):
+  """Model specification for MobileBERT in the  question answer task."""
+  args = _dict_with_default(
+      default_dict=dict(
+          uri='https://tfhub.dev/google/mobilebert/uncased_L-24_H-128_B-512_A-4_F-4_OPT/1',
+          is_tf2=False,
+          distribution_strategy='off',
+          convert_from_saved_model_tf2=True,
+          learning_rate=5e-05,
+          name='MobileBert',
+          tflite_input_name=_MOBILEBERT_TFLITE_INPUT_NAME,
+          tflite_output_name=_MOBILEBERT_TFLITE_OUTPUT_NAME,
+          default_batch_size=48),
+      **kwargs)
+  return BertQAModelSpec(**args)
+
+
+def mobilebert_qa_squad_spec(**kwargs):
+  """Model specification for MobileBERT that already retrained on SQuAD1.1."""
+  args = _dict_with_default(
+      default_dict=dict(
+          uri='https://tfhub.dev/google/mobilebert/uncased_L-24_H-128_B-512_A-4_F-4_OPT/squadv1/1',
+          is_tf2=False,
+          distribution_strategy='off',
+          convert_from_saved_model_tf2=True,
+          learning_rate=5e-05,
+          name='MobileBert',
+          tflite_input_name=_MOBILEBERT_TFLITE_INPUT_NAME,
+          tflite_output_name=_MOBILEBERT_TFLITE_OUTPUT_NAME,
+          init_from_squad_model=True,
+          default_batch_size=48),
+      **kwargs)
+  return BertQAModelSpec(**args)
 
 # A dict for model specs to make it accessible by string key.
 MODEL_SPECS = {
@@ -1108,10 +1184,10 @@ MODEL_SPECS = {
     'efficientnet_lite4': efficientnet_lite4_spec,
     'mobilenet_v2': mobilenet_v2_spec,
     'resnet_50': resnet_50_spec,
-    'average_word_vec': AverageWordVecModelSpec,
-    'bert': BertModelSpec,
-    'bert_classifier': BertClassifierModelSpec,
-    'bert_qa': BertQAModelSpec,
+    'average_word_vec': average_word_vec_spec,
+    'bert': bert_spec,
+    'bert_classifier': bert_classifier_spec,
+    'bert_qa': bert_qa_spec,
     'mobilebert_classifier': mobilebert_classifier_spec,
     'mobilebert_qa': mobilebert_qa_spec,
     'mobilebert_qa_squad': mobilebert_qa_squad_spec,
@@ -1135,7 +1211,7 @@ def get(spec_or_str):
   else:
     model_spec = spec_or_str
 
-  if inspect.isclass(model_spec):
+  if inspect.isclass(model_spec) or inspect.isfunction(model_spec):
     return model_spec()
   else:
     return model_spec
