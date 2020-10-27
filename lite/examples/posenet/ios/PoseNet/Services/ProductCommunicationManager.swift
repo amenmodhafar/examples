@@ -12,7 +12,8 @@ import DJISDK
 class ProductCommunicationManager: NSObject {
 
     // Set this value to true to use the app with the Bridge and false to connect directly to the product
-    let enableBridgeMode = true
+    let enableBridgeMode = false
+    public var handheldProduct: DJIBaseProduct?
     
     // When enableBridgeMode is set to true, set this value to the IP of your bridge app.
     let bridgeAppIP = "10.81.55.116"
@@ -48,7 +49,7 @@ extension ProductCommunicationManager : DJISDKManagerDelegate {
     }
     
     func productConnected(_ product: DJIBaseProduct?) {
-        
+        handheldProduct = product
     }
     
     func productDisconnected() {

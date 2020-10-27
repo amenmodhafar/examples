@@ -19,11 +19,14 @@ class OverlayView: UIView {
 
   var dots = [CGPoint]()
   var lines = [Line]()
+  var centerPoint = CGPoint(x: 0.0,y: 0.0)
 
   override func draw(_ rect: CGRect) {
     for dot in dots {
       drawDot(of: dot)
     }
+    
+    drawRect()
     /*for line in lines {
       drawLine(of: line)
     }*/
@@ -50,7 +53,19 @@ class OverlayView: UIView {
 
     linePath.stroke()
   }
-
+  
+    func drawRect()
+    {
+        var path = UIBezierPath()
+        path = UIBezierPath(ovalIn: CGRect(x: 140, y: 100, width: 120, height: 120))
+        UIColor.white.setStroke()
+        UIColor.clear.setFill()
+        path.lineWidth = 3
+        path.stroke()
+        path.fill()
+    }
+    
+    
   func clear() {
     self.dots = []
     self.lines = []
@@ -60,4 +75,5 @@ class OverlayView: UIView {
 private enum Traits {
   static let dot = (radius: CGFloat(8), color: UIColor.white)
     static let line = (width: CGFloat(1.0), color: UIColor.clear)
+     static let circle = (radius: CGFloat(60), color: UIColor.white)
 }

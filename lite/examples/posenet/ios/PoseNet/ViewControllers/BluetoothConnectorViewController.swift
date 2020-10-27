@@ -43,6 +43,7 @@ class BluetoothConnectorViewController: UIViewController, UITableViewDelegate, D
     }
     
     @IBAction func onBluetoothSearchButtonClicked(_ sender: AnyObject) {
+
         guard let blConnector = self.bluetoothConnector() else {
             return;
         }
@@ -50,6 +51,7 @@ class BluetoothConnectorViewController: UIViewController, UITableViewDelegate, D
         blConnector.searchBluetoothProducts { (error: Error?) in
             if error != nil {
                 self.showAlert("Search Bluetooth product failed:\(error!)")
+                NSLog("Search Bluetooth product failed:\(error!)")
             }
         }
     }

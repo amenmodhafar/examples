@@ -16,6 +16,7 @@ import AVFoundation
 import UIKit
 import os
 import DJISDK
+import DJISDK.DJIGimbal
 
 class ViewController: UIViewController {
   // MARK: Storyboards Connections
@@ -58,9 +59,29 @@ class ViewController: UIViewController {
   // Handles all data preprocessing and makes calls to run inference.
   private var modelDataHandler: ModelDataHandler?
     
+    private var gimbalController: GimbalViewController = GimbalViewController()
+  //private var speaker : SpeechViewController?
     
- weak var appDelegate: AppDelegate! = UIApplication.shared.delegate as? AppDelegate
+  private let synth = AVSpeechSynthesizer()
+  private var myUtterance = AVSpeechUtterance(string: "")
+    
+    public var workoutname: String?
+    private var schema: Schema?
+    private var exerciseNames: [String]?
+    private var workoutDisplayName : String = ""
 
+  private var centerPoint: CGPoint = CGPoint(x:200.0,y: 160.0)
+  private var distance: CGFloat = CGFloat(0.0)
+    private var homeFlag: Bool = false
+    private var awayFlag: Bool = false
+    private var backhomeFlag: Bool = false
+    private let thresholdDist: CGFloat = CGFloat(30.0)
+    private var repCount: Double = 0.0
+    private var numSet: Double = 0.0
+    
+    private var isCounting: Bool = false
+    
+    
   // MARK: View Handling Methods
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -74,7 +95,7 @@ class ViewController: UIViewController {
     cameraCapture.delegate = self
     tableView.delegate = self
     tableView.dataSource = self
-
+    
     // MARK: UI Initialization
     // Setup thread count stepper with white color.
     // https://forums.developer.apple.com/thread/121495
@@ -104,16 +125,131 @@ class ViewController: UIViewController {
     delegatesControl.selectedSegmentIndex = 0
     self.bluetoothConnectorButton.isEnabled = true;
     
+    schema = Schema.init().self
+    
+    schema!.createSuperSet(workoutname!)
+    
+    exerciseNames = schema!.workoutNames
+    
+    textToSpeech("Let's work out: " + (schema?.getCurrentExerName(numSet))!)
+    
   }
 
     
+  func checkToSwitch()
+  {
+    let wristR = modelDataHandler?.pResults.dots[10]
+    let wristL = modelDataHandler?.pResults.dots[9]
+    
+    let elbowR = modelDataHandler?.pResults.dots[8]
+    let elbowL = modelDataHandler?.pResults.dots[7]
+    
+    if (wristR!.y > 60 && wristR!.y < 400)
+    {
+        distance = sqrt(pow(wristR!.x - wristL!.x,2) + pow(wristR!.y - wristL!.y,2))
+
+        if (wristR!.y < elbowR!.y && wristL!.y < elbowL!.y && !isCounting && distance < thresholdDist )
+        {
+            isCounting = true
+            textToSpeech("Let's Go: " + (schema?.getCurrentExerName(numSet))!)
+        }
+        else if (wristR!.y < elbowR!.y && wristL!.y < elbowL!.y && isCounting && distance < thresholdDist )
+        {
+            repCount = 0
+            numSet += 1
+            textToSpeech("Better next time! Next is " + (schema?.getCurrentExerName(numSet))!)
+        }
+        else if (repCount == 10 && isCounting )
+        {
+            repCount = 0
+            numSet += 1
+            textToSpeech("Good Job! Next is " + (schema?.getCurrentExerName(numSet))!)
+        }
+    }
+  }
+
+  func compensate()
+  {
+    let pt = modelDataHandler?.pResults.dots[0]
+    
+    let Dist_x = pt!.x - centerPoint.x
+    let Dist_y = pt!.y - centerPoint.y
+    
+    if (Dist_x > thresholdDist * 2.0 )
+    {
+        gimbalController.MoveGimbalWithSpeed(pitch: 0, yaw: -5.5,roll: 0,delay: 0.2)
+    }
+    else if (Dist_x < -thresholdDist * 2.0 )
+    {
+        gimbalController.MoveGimbalWithSpeed(pitch: 0, yaw: 5,roll: 0,delay: 0.2)
+    }
+    
+    if (Dist_y > thresholdDist * 2.0 )
+    {
+        gimbalController.MoveGimbalWithSpeed(pitch: -5.5, yaw: 0,roll: 0,delay: 0.2)
+    }
+    else if (Dist_y < -thresholdDist * 2.0 )
+    {
+        gimbalController.MoveGimbalWithSpeed(pitch: 5, yaw: 0,roll: 0,delay: 0.2)
+    }
+  }
+    
+    func count(bodypart: Int)
+  {
+    let pt = modelDataHandler?.pResults.dots[bodypart]
+    
+    distance = sqrt(pow(pt!.x - centerPoint.x,2) + pow(pt!.y - centerPoint.y,2))
+    
+    if (distance < thresholdDist && !awayFlag && !homeFlag && !backhomeFlag)
+    {
+        homeFlag = true
+        
+        NSLog("Found Home")
+    }
+    
+    if (distance > thresholdDist * 2.0 && !awayFlag && homeFlag)
+    {
+        awayFlag = true
+        backhomeFlag = false
+        homeFlag = false
+        
+        NSLog("Moved Away From Home")
+    }
+    
+    if (distance < thresholdDist && awayFlag)
+    {
+        backhomeFlag = true
+        
+        NSLog("Moved Back Home")
+    }
+    
+    if (distance < thresholdDist && awayFlag && backhomeFlag)
+    {
+        repCount = repCount + 1.0
+        homeFlag = false
+        backhomeFlag = false
+        awayFlag = false
+        
+        textToSpeech(String(format: "%.0f", repCount))
+        
+        NSLog("Rep: " + String(format: "%.0f", repCount))
+    }
+
+  }
+    
+  func textToSpeech(_ text: String)
+  {
+      myUtterance = AVSpeechUtterance(string: text)
+      myUtterance.rate = 0.4
+      synth.speak(myUtterance)
+      
+      return;
+  }
     
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
 
     cameraCapture.checkCameraConfigurationAndStartSession()
-    
-    
     
   }
 
@@ -126,6 +262,8 @@ class ViewController: UIViewController {
     previewViewFrame = previewView.frame
   }
 
+  //
+    
   // MARK: Button Actions
   @IBAction func didChangeThreadCount(_ sender: UIStepper) {
     let changedCount = Int(sender.value)
@@ -180,50 +318,32 @@ class ViewController: UIViewController {
   }
 }
 
-func productConnected() {
-    guard let newProduct = DJISDKManager.product() else {
-        NSLog("Product is connected but DJISDKManager.product is nil -> something is wrong")
-        return;
-    }
 
-    //Updates the product's model
-    //self.productModel.text = "Model: \((newProduct.model)!)"
-    //self.productModel.isHidden = false
-    
-    //Updates the product's firmware version - COMING SOON
-    newProduct.getFirmwarePackageVersion{ (version:String?, error:Error?) -> Void in
-        
-        //self.productFirmwarePackageVersion.text = "Firmware Package Version: \(version ?? "Unknown")"
-        
-        if let _ = error {
-            //self.productFirmwarePackageVersion.isHidden = true
-        }else{
-            //self.productFirmwarePackageVersion.isHidden = false
-        }
-        
-        NSLog("Firmware package version is: \(version ?? "Unknown")")
-    }
-    
-    //Updates the product's connection status
-    //self.productConnectionStatus.text = "Status: Product Connected"
-    
-    //self.openComponents.isEnabled = true;
-    //self.openComponents.alpha = 1.0;
-    NSLog("Product Connected")
-}
+func executeRotateGimbal ()
+{
 
-func productDisconnected() {
-    //self.productConnectionStatus.text = "Status: No Product Connected"
 
-    //self.openComponents.isEnabled = false;
-    //self.openComponents.alpha = 0.8;
-    NSLog("Product Disconnected")
+
+
 }
 
 // MARK: - CameraFeedManagerDelegate Methods
 extension ViewController: CameraFeedManagerDelegate {
   func cameraFeedManager(_ manager: CameraFeedManager, didOutput pixelBuffer: CVPixelBuffer) {
     runModel(on: pixelBuffer)
+    checkToSwitch()
+    compensate()
+    if (isCounting)
+    {
+        if (workoutname!.lowercased().contains("arm") || workoutname!.lowercased().contains("shoulder")){
+            count(bodypart: 9)
+            count(bodypart: 10)
+        }
+            
+        else {
+            count(bodypart: 0)
+        }
+    }
   }
 
   // MARK: Session Handling Alerts
@@ -306,6 +426,8 @@ extension ViewController: CameraFeedManagerDelegate {
     // Udpate `inferencedData` to render data in `tableView`.
     inferencedData = InferencedData(score: result.score, times: times)
 
+    //count();
+    
     // Draw result.
     DispatchQueue.main.async {
       self.tableView.reloadData()
@@ -357,7 +479,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     switch section {
     case .Score:
       fieldName = section.description
-      info = String(format: "%.3f", data.score)
+      info = String(format: "%.1f", distance)
     case .Time:
       guard let row = ProcessingTimes(rawValue: indexPath.row) else {
         return cell

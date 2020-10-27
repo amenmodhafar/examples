@@ -1,20 +1,24 @@
 PODS:
+  - DJI-SDK-iOS (4.13.1)
   - TensorFlowLiteC (0.0.1-nightly.20200510)
   - TensorFlowLiteSwift (0.0.1-nightly.20200507):
     - TensorFlowLiteC (~> 0.0.1-nightly)
 
 DEPENDENCIES:
+  - DJI-SDK-iOS (~> 4.13.1)
   - TensorFlowLiteSwift (~> 0.0.1-nightly)
 
 SPEC REPOS:
   trunk:
+    - DJI-SDK-iOS
     - TensorFlowLiteC
     - TensorFlowLiteSwift
 
 SPEC CHECKSUMS:
+  DJI-SDK-iOS: 8ec6e5e9199491339fed8021158bbf82d53751f3
   TensorFlowLiteC: ea621b416610813f5240e791680e179350d8a8a2
   TensorFlowLiteSwift: d3497cd5705ec6eab636928f60ae11ad61b359af
 
-PODFILE CHECKSUM: f79c76f2b9b49cda13ef98de5dab3563ac2e4c4d
+PODFILE CHECKSUM: 14e5be0c562f276fd8f5c31a54142671954be7a4
 
 COCOAPODS: 1.9.3

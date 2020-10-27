@@ -32,6 +32,8 @@ class ModelDataHandler {
   private var heatsTensor: Tensor
   private var offsetsTensor: Tensor
 
+  public var pResults: Result
+
   // MARK: - Initialization
 
   /// A failable initializer for `ModelDataHandler`. A new instance is created if the model is
@@ -109,6 +111,8 @@ class ModelDataHandler {
     else {
       fatalError("Unexpected Model: offset tensor")
     }
+    
+    pResults = Result(dots: [], lines: [], score: 0.0)
 
   }
 
@@ -256,6 +260,7 @@ class ModelDataHandler {
       bodyPartToDotMap[part] = position
       result.dots.append(position)
     }
+    pResults = result
     
     do {
       try result.lines = BodyPart.lines.map { map throws -> Line in
@@ -332,23 +337,23 @@ struct Result {
 }
 
 enum BodyPart: String, CaseIterable {
-  case NOSE = "nose"
-  case LEFT_EYE = "left eye"
-  case RIGHT_EYE = "right eye"
-  case LEFT_EAR = "left ear"
-  case RIGHT_EAR = "right ear"
-  case LEFT_SHOULDER = "left shoulder"
-  case RIGHT_SHOULDER = "right shoulder"
-  case LEFT_ELBOW = "left elbow"
-  case RIGHT_ELBOW = "right elbow"
-  case LEFT_WRIST = "left wrist"
-  case RIGHT_WRIST = "right wrist"
-  case LEFT_HIP = "left hip"
-  case RIGHT_HIP = "right hip"
-  case LEFT_KNEE = "left knee"
-  case RIGHT_KNEE = "right knee"
-  case LEFT_ANKLE = "left ankle"
-  case RIGHT_ANKLE = "right ankle"
+  case NOSE = "nose" // 0
+  case LEFT_EYE = "left eye" // 1
+  case RIGHT_EYE = "right eye" // 2
+  case LEFT_EAR = "left ear" // 3
+  case RIGHT_EAR = "right ear" // 4
+  case LEFT_SHOULDER = "left shoulder" // 5
+  case RIGHT_SHOULDER = "right shoulder" // 6
+  case LEFT_ELBOW = "left elbow" // 7
+  case RIGHT_ELBOW = "right elbow" // 8
+  case LEFT_WRIST = "left wrist" // 9
+  case RIGHT_WRIST = "right wrist" // 10
+  case LEFT_HIP = "left hip" // 11
+  case RIGHT_HIP = "right hip" // 12
+  case LEFT_KNEE = "left knee" // 13
+  case RIGHT_KNEE = "right knee" // 14
+  case LEFT_ANKLE = "left ankle" // 15
+  case RIGHT_ANKLE = "right ankle" // 16
 
   /// List of lines connecting each part.
   static let lines = [

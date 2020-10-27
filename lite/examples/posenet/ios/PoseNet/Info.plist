@@ -18,16 +18,16 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>DJISDKAppKey</key>
+	<string>3ba18a7eab3751402c172877</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>DJISDKAppKey</key>
-	<string>9b82289f68d23cdeec30a362</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app will use camera to continuously estimate the pose the user shows.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
-	<key>NSCameraUsageDescription</key>
-	<string>This app will use camera to continuously estimate the pose the user shows.</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>

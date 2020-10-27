@@ -13,13 +13,20 @@ class StartupViewController: UIViewController {
 
     weak var appDelegate: AppDelegate! = UIApplication.shared.delegate as? AppDelegate
     
-    @IBOutlet weak var productConnectionStatus: UILabel!
+    //@IBOutlet weak var productConnectionStatus: UILabel!
     @IBOutlet weak var productModel: UILabel!
-    @IBOutlet weak var productFirmwarePackageVersion: UILabel!
+    //@IBOutlet weak var productFirmwarePackageVersion: UILabel!
     @IBOutlet weak var openComponents: UIButton!
     @IBOutlet weak var bluetoothConnectorButton: UIButton!
     @IBOutlet weak var sdkVersionLabel: UILabel!
     @IBOutlet weak var bridgeModeLabel: UILabel!
+    @IBOutlet weak var privacyPolicy: UIButton!
+    
+    @IBOutlet weak var fullbodyButton : UIButton!
+    
+    public var workoutName : String?
+    
+    private let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,25 +65,49 @@ class StartupViewController: UIViewController {
         }
     }
     
+    @IBAction func onClickPrivacyPolicy(_ sender: AnyObject)
+    {
+        guard let url = URL(string: "https://www.termsfeed.com/live/5f5c3b70-1b1b-4d0c-ad91-1053bf019914") else {
+          return //be safe
+        }
+
+        if #available(iOS 10.0, *) {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        } else {
+            UIApplication.shared.openURL(url)
+        }
+    }
+    
     override func viewDidDisappear(_ animated: Bool) {
         DJISDKManager.keyManager()?.stopAllListening(ofListeners: self)
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?)
+    {
+        //let temptag = (sender as! UIButton).tag
+        //let tmpButton = self.view.viewWithTag(temptag)
+        let workoutname = (sender as! UIButton).title(for: .normal)
+        
+        guard let viewCon = segue.destination as? ViewController else {return}
+        viewCon.workoutname = workoutname
+    }
     
     func resetUI() {
         self.title = "TUNA"
         self.sdkVersionLabel.text = "DJI SDK Version: \(DJISDKManager.sdkVersion())"
         self.openComponents.isEnabled = false; //FIXME: set it back to false
         self.bluetoothConnectorButton.isEnabled = true;
+        //self.productConnectionStatus.isHidden = true;
         self.openComponents.isEnabled = true;
-        self.productModel.isHidden = true
-        self.productFirmwarePackageVersion.isHidden = true
-        self.bridgeModeLabel.isHidden = !self.appDelegate.productCommunicationManager.enableBridgeMode
+        self.productModel.isHidden = false
+        //self.productFirmwarePackageVersion.isHidden = true
+        //self.bridgeModeLabel.isHidden = !self.appDelegate.productCommunicationManager.enableBridgeMode
         
         if self.appDelegate.productCommunicationManager.enableBridgeMode {
-            self.bridgeModeLabel.text = "Bridge: \(self.appDelegate.productCommunicationManager.bridgeAppIP)"
+            //self.bridgeModeLabel.text = "Bridge: \(self.appDelegate.productCommunicationManager.bridgeAppIP)"
         }
     }
+    
     
     func showAlert(_ msg: String?) {
         // create the alert
@@ -96,25 +127,25 @@ class StartupViewController: UIViewController {
         }
 
         //Updates the product's model
-        self.productModel.text = "Model: \((newProduct.model)!)"
+        self.productModel.text = "\((newProduct.model)!.uppercased())"
         self.productModel.isHidden = false
         
         //Updates the product's firmware version - COMING SOON
         newProduct.getFirmwarePackageVersion{ (version:String?, error:Error?) -> Void in
             
-            self.productFirmwarePackageVersion.text = "Firmware Package Version: \(version ?? "Unknown")"
+            /*self.productFirmwarePackageVersion.text = "Firmware Package Version: \(version ?? "Unknown")"
             
             if let _ = error {
                 self.productFirmwarePackageVersion.isHidden = true
             }else{
                 self.productFirmwarePackageVersion.isHidden = false
-            }
+            }*/
             
             NSLog("Firmware package version is: \(version ?? "Unknown")")
         }
         
         //Updates the product's connection status
-        self.productConnectionStatus.text = "Status: Product Connected"
+        //self.productConnectionStatus.text = "Status: Product Connected"
         
         self.openComponents.isEnabled = true;
         self.openComponents.alpha = 1.0;
@@ -122,7 +153,7 @@ class StartupViewController: UIViewController {
     }
     
     func productDisconnected() {
-        self.productConnectionStatus.text = "Status: No Product Connected"
+        //self.productConnectionStatus.text = "Status: No Product Connected"
 
         self.openComponents.isEnabled = true;
         self.openComponents.alpha = 0.8;

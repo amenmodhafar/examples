@@ -3,19 +3,43 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		188764AE2544EB0100B4DABD /* army_superset1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 188764AC2544EB0100B4DABD /* army_superset1.jpg */; };
+		188764AF2544EB0100B4DABD /* abs.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 188764AD2544EB0100B4DABD /* abs.jpg */; };
+		188764C32544EF4B00B4DABD /* forward_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 188764B02544EF4800B4DABD /* forward_button.png */; };
+		188764C42544EF4B00B4DABD /* tennis_special.JPG in Resources */ = {isa = PBXBuildFile; fileRef = 188764B12544EF4900B4DABD /* tennis_special.JPG */; };
+		188764C52544EF4B00B4DABD /* full_body.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 188764B22544EF4900B4DABD /* full_body.jpg */; };
+		188764C62544EF4B00B4DABD /* legs_arms.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 188764B32544EF4900B4DABD /* legs_arms.jpg */; };
+		188764C72544EF4B00B4DABD /* back.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 188764B42544EF4900B4DABD /* back.jpg */; };
+		188764C82544EF4B00B4DABD /* shoulders.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 188764B52544EF4900B4DABD /* shoulders.jpg */; };
+		188764C92544EF4B00B4DABD /* push_pull.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 188764B62544EF4900B4DABD /* push_pull.jpg */; };
+		188764CA2544EF4B00B4DABD /* athletic_con.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 188764B72544EF4900B4DABD /* athletic_con.jpg */; };
+		188764CB2544EF4B00B4DABD /* hiit.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 188764B82544EF4900B4DABD /* hiit.jpg */; };
+		188764CC2544EF4B00B4DABD /* play_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 188764B92544EF4900B4DABD /* play_button.png */; };
+		188764CD2544EF4B00B4DABD /* science_golf.webp in Resources */ = {isa = PBXBuildFile; fileRef = 188764BA2544EF4A00B4DABD /* science_golf.webp */; };
+		188764CE2544EF4B00B4DABD /* stop_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 188764BB2544EF4A00B4DABD /* stop_button.png */; };
+		188764CF2544EF4B00B4DABD /* golf.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 188764BC2544EF4A00B4DABD /* golf.jpg */; };
+		188764D02544EF4B00B4DABD /* full_body_agility.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 188764BD2544EF4A00B4DABD /* full_body_agility.jpg */; };
+		188764D12544EF4B00B4DABD /* dance.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 188764BE2544EF4A00B4DABD /* dance.jpg */; };
+		188764D22544EF4B00B4DABD /* backward_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 188764BF2544EF4A00B4DABD /* backward_button.png */; };
+		188764D32544EF4B00B4DABD /* legs.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 188764C02544EF4A00B4DABD /* legs.jpg */; };
+		188764D42544EF4B00B4DABD /* hiit2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 188764C12544EF4A00B4DABD /* hiit2.jpg */; };
+		188764D72545063600B4DABD /* best_chest.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 188764D62545063600B4DABD /* best_chest.jpg */; };
+		188764DA25450AAA00B4DABD /* full_body_weight.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 188764D925450AAA00B4DABD /* full_body_weight.jpg */; };
+		188764DC25450C6100B4DABD /* boxing.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 188764DB25450C6100B4DABD /* boxing.jpg */; };
+		188764DE25472AC800B4DABD /* GimbalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 188764DD25472AC800B4DABD /* GimbalViewController.swift */; };
 		18C4234B253F83A30059D107 /* ProductCommunicationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C4234A253F83A30059D107 /* ProductCommunicationManager.swift */; };
 		18C42464253FB04D0059D107 /* BluetoothConnectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C42462253FB04D0059D107 /* BluetoothConnectorViewController.swift */; };
 		18C42465253FB04D0059D107 /* StartupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C42463253FB04D0059D107 /* StartupViewController.swift */; };
-		18C424A92540AB610059D107 /* DJISDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 18C42471253FCA750059D107 /* DJISDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		18C424AB2540AC0D0059D107 /* DJISDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C42471253FCA750059D107 /* DJISDK.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		18C424AC2540AC2C0059D107 /* DJISDK.framework in Resources */ = {isa = PBXBuildFile; fileRef = 18C42471253FCA750059D107 /* DJISDK.framework */; };
 		18C424B42540AD830059D107 /* Pods_PoseNet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1CE41C09920CCEC31985547 /* Pods_PoseNet.framework */; };
 		18C424BA2540C7000059D107 /* bluetooth_transparent.png in Resources */ = {isa = PBXBuildFile; fileRef = 18C424BC2540C7000059D107 /* bluetooth_transparent.png */; };
 		18C4252A254203600059D107 /* DistortionResource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 18C42529254203600059D107 /* DistortionResource.bundle */; };
+		18C4254525447AF90059D107 /* Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C4254425447AF90059D107 /* Schema.swift */; };
 		8402440123D9834600704ABD /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 8402440023D9834600704ABD /* README.md */; };
 		840ECB20238BAA2300C7D88A /* InfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840ECB1F238BAA2300C7D88A /* InfoCell.swift */; };
 		840EDCFD2341DDD30017ED42 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 840EDCFB2341DDD30017ED42 /* Launch Screen.storyboard */; };
@@ -42,7 +66,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				18C424A92540AB610059D107 /* DJISDK.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -60,12 +83,37 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		188764AC2544EB0100B4DABD /* army_superset1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = army_superset1.jpg; sourceTree = "<group>"; };
+		188764AD2544EB0100B4DABD /* abs.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = abs.jpg; sourceTree = "<group>"; };
+		188764B02544EF4800B4DABD /* forward_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = forward_button.png; sourceTree = "<group>"; };
+		188764B12544EF4900B4DABD /* tennis_special.JPG */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = tennis_special.JPG; sourceTree = "<group>"; };
+		188764B22544EF4900B4DABD /* full_body.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = full_body.jpg; sourceTree = "<group>"; };
+		188764B32544EF4900B4DABD /* legs_arms.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = legs_arms.jpg; sourceTree = "<group>"; };
+		188764B42544EF4900B4DABD /* back.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = back.jpg; sourceTree = "<group>"; };
+		188764B52544EF4900B4DABD /* shoulders.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = shoulders.jpg; sourceTree = "<group>"; };
+		188764B62544EF4900B4DABD /* push_pull.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = push_pull.jpg; sourceTree = "<group>"; };
+		188764B72544EF4900B4DABD /* athletic_con.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = athletic_con.jpg; sourceTree = "<group>"; };
+		188764B82544EF4900B4DABD /* hiit.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = hiit.jpg; sourceTree = "<group>"; };
+		188764B92544EF4900B4DABD /* play_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = play_button.png; sourceTree = "<group>"; };
+		188764BA2544EF4A00B4DABD /* science_golf.webp */ = {isa = PBXFileReference; lastKnownFileType = file; path = science_golf.webp; sourceTree = "<group>"; };
+		188764BB2544EF4A00B4DABD /* stop_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stop_button.png; sourceTree = "<group>"; };
+		188764BC2544EF4A00B4DABD /* golf.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = golf.jpg; sourceTree = "<group>"; };
+		188764BD2544EF4A00B4DABD /* full_body_agility.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = full_body_agility.jpg; sourceTree = "<group>"; };
+		188764BE2544EF4A00B4DABD /* dance.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = dance.jpg; sourceTree = "<group>"; };
+		188764BF2544EF4A00B4DABD /* backward_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = backward_button.png; sourceTree = "<group>"; };
+		188764C02544EF4A00B4DABD /* legs.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = legs.jpg; sourceTree = "<group>"; };
+		188764C12544EF4A00B4DABD /* hiit2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = hiit2.jpg; sourceTree = "<group>"; };
+		188764D62545063600B4DABD /* best_chest.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = best_chest.jpg; sourceTree = "<group>"; };
+		188764D925450AAA00B4DABD /* full_body_weight.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = full_body_weight.jpg; sourceTree = "<group>"; };
+		188764DB25450C6100B4DABD /* boxing.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = boxing.jpg; sourceTree = "<group>"; };
+		188764DD25472AC800B4DABD /* GimbalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GimbalViewController.swift; sourceTree = "<group>"; };
 		18C4234A253F83A30059D107 /* ProductCommunicationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProductCommunicationManager.swift; sourceTree = "<group>"; };
 		18C42462253FB04D0059D107 /* BluetoothConnectorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluetoothConnectorViewController.swift; sourceTree = "<group>"; };
 		18C42463253FB04D0059D107 /* StartupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StartupViewController.swift; sourceTree = "<group>"; };
 		18C42471253FCA750059D107 /* DJISDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DJISDK.framework; path = "Pods/DJI Pods/DJI-SDK-iOS/iOS_Mobile_SDK/DJISDK.framework"; sourceTree = "<group>"; };
 		18C424BB2540C7000059D107 /* Base */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Base; path = Base.lproj/bluetooth_transparent.png; sourceTree = "<group>"; };
 		18C42529254203600059D107 /* DistortionResource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = DistortionResource.bundle; sourceTree = "<group>"; };
+		18C4254425447AF90059D107 /* Schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Schema.swift; path = PoseNet/ViewControllers/Schema.swift; sourceTree = SOURCE_ROOT; };
 		8402440023D9834600704ABD /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		840ECB1F238BAA2300C7D88A /* InfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoCell.swift; sourceTree = "<group>"; };
 		840EDCFC2341DDD30017ED42 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = "Base.lproj/Launch Screen.storyboard"; sourceTree = "<group>"; };
@@ -85,7 +133,7 @@
 		84B67CF52326338400A11A08 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		84B67CFA2326338400A11A08 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		84D6576C2387BB7E0048171E /* CGSizeExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGSizeExtension.swift; sourceTree = "<group>"; };
-		84FCF5912387BD7900663812 /* tfl_logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tfl_logo.png; path = Assets.xcassets/tfl_logo.png; sourceTree = "<group>"; };
+		84FCF5912387BD7900663812 /* tfl_logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tfl_logo.png; sourceTree = "<group>"; };
 		A1CE41C09920CCEC31985547 /* Pods_PoseNet.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PoseNet.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2BFF06D0AE9137D332447F3 /* Pods-PoseNet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PoseNet.release.xcconfig"; path = "Target Support Files/Pods-PoseNet/Pods-PoseNet.release.xcconfig"; sourceTree = "<group>"; };
 		FCA88463911267B1001A596F /* Pods-PoseNet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PoseNet.debug.xcconfig"; path = "Target Support Files/Pods-PoseNet/Pods-PoseNet.debug.xcconfig"; sourceTree = "<group>"; };
@@ -104,6 +152,38 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		188764D82545065300B4DABD /* resources */ = {
+			isa = PBXGroup;
+			children = (
+				188764DB25450C6100B4DABD /* boxing.jpg */,
+				188764D925450AAA00B4DABD /* full_body_weight.jpg */,
+				188764B22544EF4900B4DABD /* full_body.jpg */,
+				188764BC2544EF4A00B4DABD /* golf.jpg */,
+				188764B82544EF4900B4DABD /* hiit.jpg */,
+				188764C12544EF4A00B4DABD /* hiit2.jpg */,
+				188764B32544EF4900B4DABD /* legs_arms.jpg */,
+				188764C02544EF4A00B4DABD /* legs.jpg */,
+				188764B92544EF4900B4DABD /* play_button.png */,
+				188764B62544EF4900B4DABD /* push_pull.jpg */,
+				188764BA2544EF4A00B4DABD /* science_golf.webp */,
+				188764B52544EF4900B4DABD /* shoulders.jpg */,
+				188764BB2544EF4A00B4DABD /* stop_button.png */,
+				188764B12544EF4900B4DABD /* tennis_special.JPG */,
+				188764AD2544EB0100B4DABD /* abs.jpg */,
+				188764AC2544EB0100B4DABD /* army_superset1.jpg */,
+				18C424BC2540C7000059D107 /* bluetooth_transparent.png */,
+				84FCF5912387BD7900663812 /* tfl_logo.png */,
+				188764D62545063600B4DABD /* best_chest.jpg */,
+				188764B72544EF4900B4DABD /* athletic_con.jpg */,
+				188764B42544EF4900B4DABD /* back.jpg */,
+				188764BF2544EF4A00B4DABD /* backward_button.png */,
+				188764BE2544EF4A00B4DABD /* dance.jpg */,
+				188764B02544EF4800B4DABD /* forward_button.png */,
+				188764BD2544EF4A00B4DABD /* full_body_agility.jpg */,
+			);
+			path = resources;
+			sourceTree = "<group>";
+		};
 		18C42347253F83170059D107 /* Services */ = {
 			isa = PBXGroup;
 			children = (
@@ -142,6 +222,7 @@
 				18C42462253FB04D0059D107 /* BluetoothConnectorViewController.swift */,
 				18C42463253FB04D0059D107 /* StartupViewController.swift */,
 				84B67CF02326338300A11A08 /* ViewController.swift */,
+				188764DD25472AC800B4DABD /* GimbalViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -166,6 +247,7 @@
 		848842A22370180C0043FC4C /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				18C4254425447AF90059D107 /* Schema.swift */,
 				848842A32370183E0043FC4C /* posenet_mobilenet_v1_100_257x257_multi_kpt_stripped.tflite */,
 			);
 			path = Model;
@@ -217,8 +299,7 @@
 				84B67CEE2326338300A11A08 /* AppDelegate.swift */,
 				846BAF7523E7FE13006FC136 /* Constants.swift */,
 				84B67CF52326338400A11A08 /* Assets.xcassets */,
-				18C424BC2540C7000059D107 /* bluetooth_transparent.png */,
-				84FCF5912387BD7900663812 /* tfl_logo.png */,
+				188764D82545065300B4DABD /* resources */,
 				84B67CFA2326338400A11A08 /* Info.plist */,
 			);
 			path = PoseNet;
@@ -265,6 +346,7 @@
 				84B67CE92326338300A11A08 /* Resources */,
 				18C424AA2540AB610059D107 /* Embed Frameworks */,
 				18C424AF2540AD1A0059D107 /* Embed PlugIns */,
+				24A0F0D8D14D986AC8E219A7 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -313,15 +395,38 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				188764DC25450C6100B4DABD /* boxing.jpg in Resources */,
+				188764CA2544EF4B00B4DABD /* athletic_con.jpg in Resources */,
+				188764CB2544EF4B00B4DABD /* hiit.jpg in Resources */,
+				188764D42544EF4B00B4DABD /* hiit2.jpg in Resources */,
 				18C424AC2540AC2C0059D107 /* DJISDK.framework in Resources */,
+				188764D12544EF4B00B4DABD /* dance.jpg in Resources */,
+				188764C42544EF4B00B4DABD /* tennis_special.JPG in Resources */,
+				188764D22544EF4B00B4DABD /* backward_button.png in Resources */,
+				188764C52544EF4B00B4DABD /* full_body.jpg in Resources */,
 				18C4252A254203600059D107 /* DistortionResource.bundle in Resources */,
 				8402440123D9834600704ABD /* README.md in Resources */,
+				188764DA25450AAA00B4DABD /* full_body_weight.jpg in Resources */,
+				188764CF2544EF4B00B4DABD /* golf.jpg in Resources */,
+				188764D72545063600B4DABD /* best_chest.jpg in Resources */,
+				188764D02544EF4B00B4DABD /* full_body_agility.jpg in Resources */,
+				188764CE2544EF4B00B4DABD /* stop_button.png in Resources */,
 				840EDD022341DE380017ED42 /* Main.storyboard in Resources */,
 				18C424BA2540C7000059D107 /* bluetooth_transparent.png in Resources */,
+				188764D32544EF4B00B4DABD /* legs.jpg in Resources */,
 				840EDCFD2341DDD30017ED42 /* Launch Screen.storyboard in Resources */,
+				188764C92544EF4B00B4DABD /* push_pull.jpg in Resources */,
+				188764C72544EF4B00B4DABD /* back.jpg in Resources */,
 				84FCF5922387BD7900663812 /* tfl_logo.png in Resources */,
+				188764C62544EF4B00B4DABD /* legs_arms.jpg in Resources */,
+				188764CD2544EF4B00B4DABD /* science_golf.webp in Resources */,
 				84B67CF62326338400A11A08 /* Assets.xcassets in Resources */,
+				188764C82544EF4B00B4DABD /* shoulders.jpg in Resources */,
+				188764CC2544EF4B00B4DABD /* play_button.png in Resources */,
 				848842A42370183E0043FC4C /* posenet_mobilenet_v1_100_257x257_multi_kpt_stripped.tflite in Resources */,
+				188764C32544EF4B00B4DABD /* forward_button.png in Resources */,
+				188764AF2544EB0100B4DABD /* abs.jpg in Resources */,
+				188764AE2544EB0100B4DABD /* army_superset1.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -350,6 +455,23 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		24A0F0D8D14D986AC8E219A7 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PoseNet/Pods-PoseNet-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PoseNet/Pods-PoseNet-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PoseNet/Pods-PoseNet-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		84884298237010B90043FC4C /* Download TensorFlow Lite model */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -375,6 +497,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				188764DE25472AC800B4DABD /* GimbalViewController.swift in Sources */,
 				842DDB6E2372A82000F6BB94 /* OverlayView.swift in Sources */,
 				18C42464253FB04D0059D107 /* BluetoothConnectorViewController.swift in Sources */,
 				18C42465253FB04D0059D107 /* StartupViewController.swift in Sources */,
@@ -384,6 +507,7 @@
 				84B67CF12326338300A11A08 /* ViewController.swift in Sources */,
 				84B67CEF2326338300A11A08 /* AppDelegate.swift in Sources */,
 				18C4234B253F83A30059D107 /* ProductCommunicationManager.swift in Sources */,
+				18C4254525447AF90059D107 /* Schema.swift in Sources */,
 				8474FECB2341D39800377D34 /* CameraFeedManager.swift in Sources */,
 				846499C2235DAB0D009CBBC7 /* ModelDataHandler.swift in Sources */,
 				8474FEC92341D36E00377D34 /* PreviewView.swift in Sources */,
@@ -562,7 +686,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.tensorflow.PoseNet;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dji.sdk.tunaiOS;
 				PRODUCT_NAME = Tuna;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -594,7 +718,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.tensorflow.PoseNet;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dji.sdk.tunaiOS;
 				PRODUCT_NAME = Tuna;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
