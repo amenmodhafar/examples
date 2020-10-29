@@ -99,7 +99,7 @@ class BluetoothConnectorViewController: UIViewController, UITableViewDelegate, D
             if let _ = error {
                 self.showAlert("Connect Bluetooth product failed:\(error!)")
             } else {
-                self.bluetoothProducts.removeAll();
+                //self.bluetoothProducts.removeAll();
                 self.bluetoothDevicesTableView.reloadData()
                 self.connectButton.setTitle("Disconnect", for: UIControl.State())
             }

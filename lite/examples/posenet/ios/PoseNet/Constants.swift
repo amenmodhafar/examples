@@ -20,6 +20,6 @@ enum Constants {
   static let maxRGBValue: Float32 = 255.0
 
   // MARK: - Constants related to the model interperter
-  static let defaultThreadCount = 2
-  static let defaultDelegate: Delegates = .CPU
+  static let defaultThreadCount = 10
+    static let defaultDelegate: Delegates = .Metal
 }

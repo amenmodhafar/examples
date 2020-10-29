@@ -24,17 +24,35 @@ class ViewController: UIViewController {
 
   @IBOutlet weak var overlayView: OverlayView!
 
+    @IBOutlet weak var StackView: UIStackView!
+    
+    @IBOutlet weak var StackView1: UIStackView!
+    
+    @IBOutlet weak var BottomView: UIStackView!
+
   @IBOutlet weak var resumeButton: UIButton!
   @IBOutlet weak var cameraUnavailableLabel: UILabel!
+    
+    @IBOutlet weak var plusButton: UIButton!
+    @IBOutlet weak var minusButton: UIButton!
 
-  @IBOutlet weak var tableView: UITableView!
+  //@IBOutlet weak var tableView: UITableView!
 
-  @IBOutlet weak var threadCountLabel: UILabel!
-  @IBOutlet weak var threadCountStepper: UIStepper!
+  //@IBOutlet weak var threadCountLabel: UILabel!
+  //@IBOutlet weak var threadCountStepper: UIStepper!
 
-  @IBOutlet weak var delegatesControl: UISegmentedControl!
+  //@IBOutlet weak var delegatesControl: UISegmentedControl!
     
   @IBOutlet weak var bluetoothConnectorButton: UIButton!
+    @IBOutlet weak var titleLabel: UILabel!
+    
+    @IBOutlet weak var playButton: UIButton!
+    @IBOutlet weak var forwardButton: UIButton!
+    @IBOutlet weak var backwardButton: UIButton!
+    
+    @IBOutlet weak var elapsedTime: UILabel!
+    @IBOutlet weak var workTime: UILabel!
+    @IBOutlet weak var uiCounter: UILabel!
 
   // MARK: ModelDataHandler traits
   var threadCount: Int = Constants.defaultThreadCount
@@ -45,7 +63,7 @@ class ViewController: UIViewController {
   private var inferencedData: InferencedData?
 
   // Minimum score to render the result.
-  private let minimumScore: Float = 0.2
+  private let minimumScore: Float = 0.5
 
   // Relative location of `overlayView` to `previewView`.
   private var overlayViewFrame: CGRect?
@@ -69,18 +87,26 @@ class ViewController: UIViewController {
     private var schema: Schema?
     private var exerciseNames: [String]?
     private var workoutDisplayName : String = ""
+    
+    private var startTime = NSDate.timeIntervalSinceReferenceDate
+    private var everyStartTime = NSDate.timeIntervalSinceReferenceDate
+    private var elapsedTimeDisplay: String?
+    private var workTimeDisplay: String?
 
-  private var centerPoint: CGPoint = CGPoint(x:200.0,y: 160.0)
+
+  private var centerPoint: CGPoint = CGPoint(x:180.0,y: 160.0)
   private var distance: CGFloat = CGFloat(0.0)
     private var homeFlag: Bool = false
     private var awayFlag: Bool = false
     private var backhomeFlag: Bool = false
     private let thresholdDist: CGFloat = CGFloat(30.0)
     private var repCount: Double = 0.0
-    private var numSet: Double = 0.0
-    
+    private var numSet: Double = 1.0
+    private var backwardStep: Double = 0.0
     private var isCounting: Bool = false
     
+    private var uiCount: Double = 0
+    private var uiBuffer: Double = 2
     
   // MARK: View Handling Methods
   override func viewDidLoad() {
@@ -93,7 +119,7 @@ class ViewController: UIViewController {
     }
 
     cameraCapture.delegate = self
-    tableView.delegate = self
+    /*tableView.delegate = self
     tableView.dataSource = self
     
     // MARK: UI Initialization
@@ -122,8 +148,8 @@ class ViewController: UIViewController {
         at: delegate.rawValue,
         animated: false)
     }
-    delegatesControl.selectedSegmentIndex = 0
-    self.bluetoothConnectorButton.isEnabled = true;
+    delegatesControl.selectedSegmentIndex = 0*/
+    self.bluetoothConnectorButton.isEnabled = true
     
     schema = Schema.init().self
     
@@ -131,71 +157,166 @@ class ViewController: UIViewController {
     
     exerciseNames = schema!.workoutNames
     
-    textToSpeech("Let's work out: " + (schema?.getCurrentExerName(numSet))!)
+    workoutDisplayName =
+        (schema?.getCurrentExerName(numSet))!
+    
+    textToSpeech("Let's work out: " + workoutDisplayName)
     
   }
+    
+    func updateTime(intervalBeginning: TimeInterval) -> String
+  {
+    let currentTime = NSDate.timeIntervalSinceReferenceDate
+    
+    var elapsedTime:TimeInterval = currentTime - intervalBeginning
+    
+    //calculate the minutes in elapsed time.
 
+    let minutes = UInt8(elapsedTime / 60.0)
+
+    elapsedTime -= (TimeInterval(minutes) * 60)
+
+    //calculate the seconds in elapsed time.
+
+    let seconds = UInt8(elapsedTime)
+
+    elapsedTime -= TimeInterval(seconds)
+
+    //add the leading zero for minutes, seconds and millseconds and store them as string constants
+
+    let strMinutes = String(format: "%02d", minutes)
+    let strSeconds = String(format: "%02d", seconds)
+    
+    return "\(strMinutes):\(strSeconds)"
+    
+  }
+    
     
   func checkToSwitch()
   {
-    let wristR = modelDataHandler?.pResults.dots[10]
-    let wristL = modelDataHandler?.pResults.dots[9]
-    
-    let elbowR = modelDataHandler?.pResults.dots[8]
-    let elbowL = modelDataHandler?.pResults.dots[7]
-    
-    if (wristR!.y > 60 && wristR!.y < 400)
+    if ((modelDataHandler?.pResults.score)! >= minimumScore)
     {
-        distance = sqrt(pow(wristR!.x - wristL!.x,2) + pow(wristR!.y - wristL!.y,2))
+        let wristR = modelDataHandler?.pResults.dots[10]
+        let wristL = modelDataHandler?.pResults.dots[9]
+        
+        let elbowR = modelDataHandler?.pResults.dots[8]
+        let elbowL = modelDataHandler?.pResults.dots[7]
+        
+        distance = abs(wristR!.y - wristL!.y)
 
         if (wristR!.y < elbowR!.y && wristL!.y < elbowL!.y && !isCounting && distance < thresholdDist )
         {
             isCounting = true
-            textToSpeech("Let's Go: " + (schema?.getCurrentExerName(numSet))!)
+            textToSpeech("Let's Go: " + (schema?.getCurrentExerName(numSet - backwardStep))!)
+            
+            DispatchQueue.main.async {
+                self.playButton.setImage(UIImage(named: "stop_button.png")!, for: .normal)
+            }
+            
         }
-        else if (wristR!.y < elbowR!.y && wristL!.y < elbowL!.y && isCounting && distance < thresholdDist )
+        /*else if (wristR!.y < elbowR!.y && wristL!.y < elbowL!.y && isCounting && distance < thresholdDist )
         {
             repCount = 0
             numSet += 1
-            textToSpeech("Better next time! Next is " + (schema?.getCurrentExerName(numSet))!)
-        }
+            isCounting = false
+            textToSpeech("Taking a break!")
+        }*/
         else if (repCount == 10 && isCounting )
         {
             repCount = 0
             numSet += 1
-            textToSpeech("Good Job! Next is " + (schema?.getCurrentExerName(numSet))!)
+            textToSpeech("Great Work! Up next is " + (schema?.getCurrentExerName(numSet - backwardStep))!)
         }
     }
   }
 
   func compensate()
   {
-    let pt = modelDataHandler?.pResults.dots[0]
-    
-    let Dist_x = pt!.x - centerPoint.x
-    let Dist_y = pt!.y - centerPoint.y
-    
-    if (Dist_x > thresholdDist * 2.0 )
+    if ((modelDataHandler?.pResults.score)! >= 0.3)
     {
-        gimbalController.MoveGimbalWithSpeed(pitch: 0, yaw: -5.5,roll: 0,delay: 0.2)
-    }
-    else if (Dist_x < -thresholdDist * 2.0 )
-    {
-        gimbalController.MoveGimbalWithSpeed(pitch: 0, yaw: 5,roll: 0,delay: 0.2)
-    }
-    
-    if (Dist_y > thresholdDist * 2.0 )
-    {
-        gimbalController.MoveGimbalWithSpeed(pitch: -5.5, yaw: 0,roll: 0,delay: 0.2)
-    }
-    else if (Dist_y < -thresholdDist * 2.0 )
-    {
-        gimbalController.MoveGimbalWithSpeed(pitch: 5, yaw: 0,roll: 0,delay: 0.2)
+        let pt = modelDataHandler?.pResults.dots[0]
+
+        let Dist_x = pt!.x - centerPoint.x
+        let Dist_y = pt!.y - centerPoint.y
+
+        if (Dist_x > thresholdDist * 2.0 )
+        {
+            gimbalController.MoveGimbalWithSpeed(pitch: 0, yaw: -5.5,roll: 0,delay: 0.2)
+        }
+        else if (Dist_x < -thresholdDist * 2.0 )
+        {
+            gimbalController.MoveGimbalWithSpeed(pitch: 0, yaw: 5,roll: 0,delay: 0.2)
+        }
+
+        if (Dist_y > thresholdDist * 2.0 )
+        {
+            gimbalController.MoveGimbalWithSpeed(pitch: -5.5, yaw: 0,roll: 0,delay: 0.2)
+        }
+        else if (Dist_y < -thresholdDist * 2.0 )
+        {
+            gimbalController.MoveGimbalWithSpeed(pitch: 5, yaw: 0,roll: 0,delay: 0.2)
+        }
     }
   }
     
-    func count(bodypart: Int)
+  func countController()
   {
+    checkToSwitch()
+    
+    if (isCounting)
+    {
+        if (workoutname!.lowercased().contains("arm") || workoutname!.lowercased().contains("shoulder") ||
+            workoutname!.lowercased().contains("boxing") ||
+            workoutDisplayName.lowercased().contains("press")){
+            count(bodypart: 9)
+            count(bodypart: 10)
+        }
+            
+        else {
+            count(bodypart: 0)
+        }
+
+    }
+    
+    updateUI()
+    
+  }
+    
+  func updateUI()
+  {
+    uiCount += 1
+    
+    
+    if (uiCount >= uiBuffer)
+    {
+        if (isCounting)
+        {
+            workTimeDisplay = updateTime(intervalBeginning: everyStartTime)
+            
+            DispatchQueue.main.sync {
+            self.workTime.text =  workTimeDisplay
+            }
+            
+        }
+    
+        elapsedTimeDisplay = updateTime(intervalBeginning: startTime)
+        
+        DispatchQueue.main.sync {
+            self.elapsedTime.text = elapsedTimeDisplay
+            self.uiCounter.text = "\(String(format: "%.0f", repCount))"
+            
+            let title = "\(String(format: "%.0f", numSet)) \(String("- ")) \(workoutDisplayName.uppercased())"
+            self.titleLabel.text = title
+        }
+        
+        uiCount = 0
+    }
+  }
+    
+  func count(bodypart: Int)
+  {
+    if ((modelDataHandler?.pResults.score)! >= minimumScore)
+    {
     let pt = modelDataHandler?.pResults.dots[bodypart]
     
     distance = sqrt(pow(pt!.x - centerPoint.x,2) + pow(pt!.y - centerPoint.y,2))
@@ -234,6 +355,7 @@ class ViewController: UIViewController {
         
         NSLog("Rep: " + String(format: "%.0f", repCount))
     }
+    }
 
   }
     
@@ -264,8 +386,70 @@ class ViewController: UIViewController {
 
   //
     
+    @IBAction func didClickPlay(_ sender: UIButton)
+    {
+        if (isCounting)
+        {
+            isCounting = false
+            numSet += 1
+            repCount = 0
+            workoutDisplayName = (schema?.getCurrentExerName(numSet - backwardStep))!
+            textToSpeech("Take a break")
+            
+            playButton.setImage(UIImage(named: "play_button.png")!, for: .normal)
+        }
+        else
+        {
+            isCounting = true
+            workoutDisplayName = (schema?.getCurrentExerName(numSet - backwardStep))!
+            textToSpeech("Let's Go: " + (workoutDisplayName))
+
+            playButton.setImage(UIImage(named: "stop_button.png")!, for: .normal)
+            everyStartTime = NSDate.timeIntervalSinceReferenceDate
+        }
+    }
+    
+    @IBAction func didPlusClick(_ sender: UIButton)
+    {
+        repCount += 1
+        
+    }
+    
+    @IBAction func didMinusClick(_ sender: UIButton)
+    {
+        if (repCount >= 1)
+        {
+            repCount -= 1
+        }
+    }
+    
+    @IBAction func didClickForwards(_ sender: UIButton)
+    {
+        numSet += 1
+        repCount = 0
+        isCounting = true
+        workoutDisplayName = (schema?.getCurrentExerName(numSet - backwardStep))!
+        textToSpeech("Move to: " + workoutDisplayName )
+        everyStartTime = NSDate.timeIntervalSinceReferenceDate
+        
+        self.playButton.setImage(UIImage(named: "stop_button.png")!, for: .normal)
+    }
+    
+    @IBAction func didClickBackwards(_ sender: UIButton)
+    {
+        numSet += 1
+        backwardStep += 2
+        repCount = 0
+        isCounting = true
+        workoutDisplayName = (schema?.getCurrentExerName(numSet - backwardStep))!
+        textToSpeech("Back to: " + workoutDisplayName )
+        everyStartTime = NSDate.timeIntervalSinceReferenceDate
+        
+        self.playButton.setImage(UIImage(named: "stop_button.png")!, for: .normal)
+    }
+    
   // MARK: Button Actions
-  @IBAction func didChangeThreadCount(_ sender: UIStepper) {
+  /*@IBAction func didChangeThreadCount(_ sender: UIStepper) {
     let changedCount = Int(sender.value)
     if threadCountLabel.text == changedCount.description {
       return
@@ -292,7 +476,7 @@ class ViewController: UIViewController {
     }
     delegate = changedDelegate
     os_log("Delegate is changed to: %s", delegate.description)
-  }
+  }*/
 
   @IBAction func didTapResumeButton(_ sender: Any) {
     cameraCapture.resumeInterruptedSession { complete in
@@ -319,31 +503,15 @@ class ViewController: UIViewController {
 }
 
 
-func executeRotateGimbal ()
-{
-
-
-
-
-}
-
 // MARK: - CameraFeedManagerDelegate Methods
 extension ViewController: CameraFeedManagerDelegate {
   func cameraFeedManager(_ manager: CameraFeedManager, didOutput pixelBuffer: CVPixelBuffer) {
     runModel(on: pixelBuffer)
-    checkToSwitch()
+    
     compensate()
-    if (isCounting)
-    {
-        if (workoutname!.lowercased().contains("arm") || workoutname!.lowercased().contains("shoulder")){
-            count(bodypart: 9)
-            count(bodypart: 10)
-        }
-            
-        else {
-            count(bodypart: 0)
-        }
-    }
+    
+    countController()
+    
   }
 
   // MARK: Session Handling Alerts
@@ -430,7 +598,7 @@ extension ViewController: CameraFeedManagerDelegate {
     
     // Draw result.
     DispatchQueue.main.async {
-      self.tableView.reloadData()
+      //self.tableView.reloadData()
       // If score is too low, clear result remaining in the overlayView.
       if result.score < self.minimumScore {
         self.clearResult()

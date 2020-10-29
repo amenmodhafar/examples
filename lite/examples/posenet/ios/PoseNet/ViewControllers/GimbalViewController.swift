@@ -29,6 +29,7 @@ public class GimbalViewController{
 
         if (DJISDKManager.product() != nil){
             DJISDKManager.product()!.gimbal!.setMotorEnabled(true)
+            DJISDKManager.product()!.gimbal!.setInvertedControlEnabled(false, on: DJIGimbalAxis.pitchAndYaw)
         }
     }
     

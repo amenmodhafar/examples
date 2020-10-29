@@ -31,6 +31,7 @@
 		188764DA25450AAA00B4DABD /* full_body_weight.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 188764D925450AAA00B4DABD /* full_body_weight.jpg */; };
 		188764DC25450C6100B4DABD /* boxing.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 188764DB25450C6100B4DABD /* boxing.jpg */; };
 		188764DE25472AC800B4DABD /* GimbalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 188764DD25472AC800B4DABD /* GimbalViewController.swift */; };
+		188764E3254A66DE00B4DABD /* arrow_back.png in Resources */ = {isa = PBXBuildFile; fileRef = 188764E1254A66DE00B4DABD /* arrow_back.png */; };
 		18C4234B253F83A30059D107 /* ProductCommunicationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C4234A253F83A30059D107 /* ProductCommunicationManager.swift */; };
 		18C42464253FB04D0059D107 /* BluetoothConnectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C42462253FB04D0059D107 /* BluetoothConnectorViewController.swift */; };
 		18C42465253FB04D0059D107 /* StartupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C42463253FB04D0059D107 /* StartupViewController.swift */; };
@@ -107,6 +108,7 @@
 		188764D925450AAA00B4DABD /* full_body_weight.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = full_body_weight.jpg; sourceTree = "<group>"; };
 		188764DB25450C6100B4DABD /* boxing.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = boxing.jpg; sourceTree = "<group>"; };
 		188764DD25472AC800B4DABD /* GimbalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GimbalViewController.swift; sourceTree = "<group>"; };
+		188764E2254A66DE00B4DABD /* Base */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Base; path = Base.lproj/arrow_back.png; sourceTree = "<group>"; };
 		18C4234A253F83A30059D107 /* ProductCommunicationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProductCommunicationManager.swift; sourceTree = "<group>"; };
 		18C42462253FB04D0059D107 /* BluetoothConnectorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluetoothConnectorViewController.swift; sourceTree = "<group>"; };
 		18C42463253FB04D0059D107 /* StartupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StartupViewController.swift; sourceTree = "<group>"; };
@@ -155,6 +157,7 @@
 		188764D82545065300B4DABD /* resources */ = {
 			isa = PBXGroup;
 			children = (
+				188764E1254A66DE00B4DABD /* arrow_back.png */,
 				188764DB25450C6100B4DABD /* boxing.jpg */,
 				188764D925450AAA00B4DABD /* full_body_weight.jpg */,
 				188764B22544EF4900B4DABD /* full_body.jpg */,
@@ -417,6 +420,7 @@
 				840EDCFD2341DDD30017ED42 /* Launch Screen.storyboard in Resources */,
 				188764C92544EF4B00B4DABD /* push_pull.jpg in Resources */,
 				188764C72544EF4B00B4DABD /* back.jpg in Resources */,
+				188764E3254A66DE00B4DABD /* arrow_back.png in Resources */,
 				84FCF5922387BD7900663812 /* tfl_logo.png in Resources */,
 				188764C62544EF4B00B4DABD /* legs_arms.jpg in Resources */,
 				188764CD2544EF4B00B4DABD /* science_golf.webp in Resources */,
@@ -519,6 +523,14 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
+		188764E1254A66DE00B4DABD /* arrow_back.png */ = {
+			isa = PBXVariantGroup;
+			children = (
+				188764E2254A66DE00B4DABD /* Base */,
+			);
+			name = arrow_back.png;
+			sourceTree = "<group>";
+		};
 		18C424BC2540C7000059D107 /* bluetooth_transparent.png */ = {
 			isa = PBXVariantGroup;
 			children = (
