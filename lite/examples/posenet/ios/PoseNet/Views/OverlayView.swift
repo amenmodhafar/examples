@@ -63,6 +63,14 @@ class OverlayView: UIView {
         path.lineWidth = 3
         path.stroke()
         path.fill()
+        
+        var path1 = UIBezierPath()
+        path1 = UIBezierPath(ovalIn: CGRect(x: 160, y: 120, width: 80, height: 80))
+        UIColor.init(red: 3, green: 155, blue: 245, alpha: 255).setStroke()
+        UIColor.clear.setFill()
+        path1.lineWidth = 2
+        path1.stroke()
+        path1.fill()
     }
     
     
@@ -73,7 +81,8 @@ class OverlayView: UIView {
 }
 
 private enum Traits {
-  static let dot = (radius: CGFloat(8), color: UIColor.white)
+    static let dot = (radius: CGFloat(8), color: UIColor.lightGray)
     static let line = (width: CGFloat(1.0), color: UIColor.clear)
      static let circle = (radius: CGFloat(60), color: UIColor.white)
+    //static let circle = (radius: CGFloat(40), color: UIColor.init(red: 3, green: 155, blue: 245, alpha: 255))
 }

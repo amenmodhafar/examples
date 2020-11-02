@@ -63,7 +63,7 @@ class ViewController: UIViewController {
   private var inferencedData: InferencedData?
 
   // Minimum score to render the result.
-  private let minimumScore: Float = 0.5
+  private var minimumScore: Float = 0.5
 
   // Relative location of `overlayView` to `previewView`.
   private var overlayViewFrame: CGRect?
@@ -94,20 +94,49 @@ class ViewController: UIViewController {
     private var workTimeDisplay: String?
 
 
-  private var centerPoint: CGPoint = CGPoint(x:180.0,y: 160.0)
+  private var centerPoint: CGPoint = CGPoint(x:200.0,y: 160.0)
   private var distance: CGFloat = CGFloat(0.0)
+     private var distance1: CGFloat = CGFloat(0.0)
     private var homeFlag: Bool = false
     private var awayFlag: Bool = false
     private var backhomeFlag: Bool = false
+    private var awayFlag1: Bool = false
+    private var backhomeFlag1: Bool = false
     private let thresholdDist: CGFloat = CGFloat(30.0)
     private var repCount: Double = 0.0
     private var numSet: Double = 1.0
     private var backwardStep: Double = 0.0
     private var isCounting: Bool = false
-    
+    private var maxReps: Double = 10
+    private var countBuffer: Double = 0
+    private var countBuffer1: Double = 0
     private var uiCount: Double = 0
     private var uiBuffer: Double = 2
+    private var aiRoute: Double = 0
     
+    
+    struct workoutSet: Codable{
+        var numRepsJSON: Double
+        var numSetsJSON: Double
+        var elapsedTimeJSON: String
+        var workoutTimeJSON: String
+        var workoutNameJSON: String
+        var workoutDateJSON: String
+        var routineNameJSON: String
+        
+        /*public init(_numReps: Double ,_numSets: Double, _elapsedTime: String,
+                               _workoutTime: String, _workoutName: String, _workoutDate: String, _routineName: String)
+        {
+            numRepsJSON = _numReps
+            numSetsJSON = _numSets
+            elapsedTimeJSON = _elapsedTime
+            workoutTimeJSON = _workoutTime
+            workoutNameJSON = _workoutName
+            workoutDateJSON = _workoutDate
+            routineNameJSON = _routineName
+        }*/
+        
+    }
   // MARK: View Handling Methods
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -119,36 +148,7 @@ class ViewController: UIViewController {
     }
 
     cameraCapture.delegate = self
-    /*tableView.delegate = self
-    tableView.dataSource = self
-    
-    // MARK: UI Initialization
-    // Setup thread count stepper with white color.
-    // https://forums.developer.apple.com/thread/121495
-    threadCountStepper.setDecrementImage(
-      threadCountStepper.decrementImage(for: .normal), for: .normal)
-    threadCountStepper.setIncrementImage(
-      threadCountStepper.incrementImage(for: .normal), for: .normal)
-    // Setup initial stepper value and its label.
-    threadCountStepper.value = Double(Constants.defaultThreadCount)
-    threadCountLabel.text = Constants.defaultThreadCount.description
 
-    // Setup segmented controller's color.
-    delegatesControl.setTitleTextAttributes(
-      [NSAttributedString.Key.foregroundColor: UIColor.lightGray],
-      for: .normal)
-    delegatesControl.setTitleTextAttributes(
-      [NSAttributedString.Key.foregroundColor: UIColor.black],
-      for: .selected)
-    // Remove existing segments to initialize it with `Delegates` entries.
-    delegatesControl.removeAllSegments()
-    Delegates.allCases.forEach { delegate in
-      delegatesControl.insertSegment(
-        withTitle: delegate.description,
-        at: delegate.rawValue,
-        animated: false)
-    }
-    delegatesControl.selectedSegmentIndex = 0*/
     self.bluetoothConnectorButton.isEnabled = true
     
     schema = Schema.init().self
@@ -162,6 +162,7 @@ class ViewController: UIViewController {
     
     textToSpeech("Let's work out: " + workoutDisplayName)
     
+    compensationFactors()
   }
     
     func updateTime(intervalBeginning: TimeInterval) -> String
@@ -194,7 +195,7 @@ class ViewController: UIViewController {
     
   func checkToSwitch()
   {
-    if ((modelDataHandler?.pResults.score)! >= minimumScore)
+    if ((modelDataHandler?.pResults.score)! >= 0.5)
     {
         let wristR = modelDataHandler?.pResults.dots[10]
         let wristL = modelDataHandler?.pResults.dots[9]
@@ -214,18 +215,22 @@ class ViewController: UIViewController {
             }
             
         }
-        /*else if (wristR!.y < elbowR!.y && wristL!.y < elbowL!.y && isCounting && distance < thresholdDist )
+        else if (repCount == maxReps && isCounting )
         {
+            saveSet()
+            
             repCount = 0
             numSet += 1
+            workoutDisplayName = (schema?.getCurrentExerName(numSet - backwardStep))!
+            textToSpeech("Great Work! Up next is " + workoutDisplayName)
+            
+            DispatchQueue.main.async {
+                self.playButton.setImage(UIImage(named: "play_button.png")!, for: .normal)
+            }
+            
+            compensationFactors()
+            
             isCounting = false
-            textToSpeech("Taking a break!")
-        }*/
-        else if (repCount == 10 && isCounting )
-        {
-            repCount = 0
-            numSet += 1
-            textToSpeech("Great Work! Up next is " + (schema?.getCurrentExerName(numSet - backwardStep))!)
         }
     }
   }
@@ -234,28 +239,79 @@ class ViewController: UIViewController {
   {
     if ((modelDataHandler?.pResults.score)! >= 0.3)
     {
-        let pt = modelDataHandler?.pResults.dots[0]
+        if (isCounting)
+        {
+            let pt = modelDataHandler?.pResults.dots[0]
 
-        let Dist_x = pt!.x - centerPoint.x
-        let Dist_y = pt!.y - centerPoint.y
+            let Dist_x = pt!.x - centerPoint.x
+            let Dist_y = pt!.y - centerPoint.y
 
-        if (Dist_x > thresholdDist * 2.0 )
-        {
-            gimbalController.MoveGimbalWithSpeed(pitch: 0, yaw: -5.5,roll: 0,delay: 0.2)
-        }
-        else if (Dist_x < -thresholdDist * 2.0 )
-        {
-            gimbalController.MoveGimbalWithSpeed(pitch: 0, yaw: 5,roll: 0,delay: 0.2)
-        }
+            if (Dist_x > thresholdDist * 3.0 )
+            {
+                gimbalController.MoveGimbalWithSpeed(pitch: 0, yaw: -5.5,roll: 0,delay: 0.2)
+            }
+            else if (Dist_x < -thresholdDist * 3.0 )
+            {
+                gimbalController.MoveGimbalWithSpeed(pitch: 0, yaw: 5.5,roll: 0,delay: 0.2)
+            }
 
-        if (Dist_y > thresholdDist * 2.0 )
-        {
-            gimbalController.MoveGimbalWithSpeed(pitch: -5.5, yaw: 0,roll: 0,delay: 0.2)
+            if (Dist_y > thresholdDist * 5.0 )
+            {
+                gimbalController.MoveGimbalWithSpeed(pitch: -5.5, yaw: 0,roll: 0,delay: 0.2)
+            }
+            else if (Dist_y < -thresholdDist * 3.0 )
+            {
+                gimbalController.MoveGimbalWithSpeed(pitch: 5.5, yaw: 0,roll: 0,delay: 0.2)
+            }
         }
-        else if (Dist_y < -thresholdDist * 2.0 )
+        else
         {
-            gimbalController.MoveGimbalWithSpeed(pitch: 5, yaw: 0,roll: 0,delay: 0.2)
+            let pt = modelDataHandler?.pResults.dots[0]
+
+            let Dist_x = pt!.x - centerPoint.x
+            let Dist_y = pt!.y - centerPoint.y
+
+            if (Dist_x > thresholdDist * 2.0 )
+            {
+                gimbalController.MoveGimbalWithSpeed(pitch: 0, yaw: -4.5,roll: 0,delay: 0.3)
+            }
+            else if (Dist_x < -thresholdDist * 2.0 )
+            {
+                gimbalController.MoveGimbalWithSpeed(pitch: 0, yaw: 4.5,roll: 0,delay: 0.3)
+            }
+
+            if (Dist_y > thresholdDist * 2.0 )
+            {
+                gimbalController.MoveGimbalWithSpeed(pitch: -4.5, yaw: 0,roll: 0,delay: 0.3)
+            }
+            else if (Dist_y < -thresholdDist * 2.0 )
+            {
+                gimbalController.MoveGimbalWithSpeed(pitch: 4.5, yaw: 0,roll: 0,delay: 0.3)
+            }
         }
+    }
+  }
+
+  func compensationFactors()
+  {
+    if (workoutname!.lowercased().contains("arm") || workoutname!.lowercased().contains("shoulder") ||
+        workoutname!.lowercased().contains("boxing") || workoutname!.lowercased().contains("tennis") ||
+        workoutname!.lowercased().contains("golf") || workoutDisplayName.lowercased().contains("press")){
+        aiRoute = 1
+        minimumScore = 0.5
+        maxReps = 40
+    }
+    else if (workoutDisplayName.lowercased().contains("push"))
+    {
+        aiRoute = 0
+        minimumScore = 0.3
+        maxReps = 20
+    }
+        
+    else {
+        aiRoute = 0
+        minimumScore = 0.5
+        maxReps = 16
     }
   }
     
@@ -265,13 +321,9 @@ class ViewController: UIViewController {
     
     if (isCounting)
     {
-        if (workoutname!.lowercased().contains("arm") || workoutname!.lowercased().contains("shoulder") ||
-            workoutname!.lowercased().contains("boxing") ||
-            workoutDisplayName.lowercased().contains("press")){
+        if (aiRoute == 1){
             count(bodypart: 9)
-            count(bodypart: 10)
         }
-            
         else {
             count(bodypart: 0)
         }
@@ -315,52 +367,131 @@ class ViewController: UIViewController {
     
   func count(bodypart: Int)
   {
+    
     if ((modelDataHandler?.pResults.score)! >= minimumScore)
     {
-    let pt = modelDataHandler?.pResults.dots[bodypart]
-    
-    distance = sqrt(pow(pt!.x - centerPoint.x,2) + pow(pt!.y - centerPoint.y,2))
-    
-    if (distance < thresholdDist && !awayFlag && !homeFlag && !backhomeFlag)
-    {
-        homeFlag = true
-        
-        NSLog("Found Home")
-    }
-    
-    if (distance > thresholdDist * 2.0 && !awayFlag && homeFlag)
-    {
-        awayFlag = true
-        backhomeFlag = false
-        homeFlag = false
-        
-        NSLog("Moved Away From Home")
-    }
-    
-    if (distance < thresholdDist && awayFlag)
-    {
-        backhomeFlag = true
-        
-        NSLog("Moved Back Home")
-    }
-    
-    if (distance < thresholdDist && awayFlag && backhomeFlag)
-    {
-        repCount = repCount + 1.0
-        homeFlag = false
-        backhomeFlag = false
-        awayFlag = false
-        
-        textToSpeech(String(format: "%.0f", repCount))
-        
-        NSLog("Rep: " + String(format: "%.0f", repCount))
-    }
+        if (aiRoute == 0)
+        {
+            let pt = modelDataHandler?.pResults.dots[bodypart]
+            
+            distance = sqrt(pow(pt!.x - centerPoint.x,2) + pow(pt!.y - centerPoint.y,2))
+            
+            if (distance < thresholdDist && !awayFlag && !homeFlag && !backhomeFlag)
+            {
+                homeFlag = true
+                
+                NSLog("Found Home")
+            }
+            
+            if (distance > thresholdDist * 1.5 && !awayFlag && homeFlag)
+            {
+                awayFlag = true
+                backhomeFlag = false
+                homeFlag = false
+                
+                NSLog("Moved Away From Home")
+            }
+            
+                if (distance < thresholdDist * 1.5 && awayFlag)
+            {
+                backhomeFlag = true
+                
+                NSLog("Moved Back Home")
+            }
+            
+            if (distance < thresholdDist * 1.5 && awayFlag && backhomeFlag)
+            {
+                repCount = repCount + 1.0
+                homeFlag = false
+                backhomeFlag = false
+                awayFlag = false
+                
+                textToSpeech(String(format: "%.0f", repCount))
+                
+                NSLog("Rep: " + String(format: "%.0f", repCount))
+            }
+        }
+        else
+        {
+            
+            let pt = modelDataHandler?.pResults.dots[bodypart]
+            let pt1 = modelDataHandler?.pResults.dots[bodypart+1]
+            
+            distance = sqrt(pow(pt!.x - centerPoint.x,2) + pow(pt!.y - centerPoint.y,2))
+            distance1 = sqrt(pow(pt1!.x - centerPoint.x,2) + pow(pt1!.y - centerPoint.y,2))
+            
+            if (countBuffer >= uiBuffer)
+            {
+                if (distance > thresholdDist * 1.5 && !awayFlag)
+                {
+                    awayFlag = true
+                    backhomeFlag = false
+                }
+                
+                if (distance < thresholdDist * 1.5 && awayFlag )
+                {
+                    backhomeFlag = true
+                }
+                
+                if (distance < thresholdDist * 1.5 && awayFlag && backhomeFlag)
+                {
+                    repCount = repCount + 1.0
+                    backhomeFlag = false
+                    awayFlag = false
+                    
+                    textToSpeech(String(format: "%.0f", repCount))
+                    
+                    NSLog("Rep: " + String(format: "%.0f", repCount))
+                    
+                }
+                
+                countBuffer = 0
+            }
+            
+            countBuffer += 1
+            
+            if (countBuffer1 >= uiBuffer)
+            {
+                if (distance1 > thresholdDist * 1.5 && !awayFlag1)
+                {
+                    awayFlag1 = true
+                    backhomeFlag1 = false
+                }
+                
+                if (distance1 < thresholdDist * 1.5 && awayFlag1 )
+                {
+                    backhomeFlag1 = true
+                }
+                
+                if (distance1 < thresholdDist * 1.5 && awayFlag1 && backhomeFlag1)
+                {
+                    repCount = repCount + 1.0
+                    backhomeFlag1 = false
+                    awayFlag1 = false
+                    
+                    textToSpeech(String(format: "%.0f", repCount))
+                    
+                    NSLog("Rep: " + String(format: "%.0f", repCount))
+                    
+                }
+                
+                countBuffer1 = 0
+            }
+            
+            countBuffer1 += 1
+            
+        }
     }
 
   }
     
   func textToSpeech(_ text: String)
   {
+     if (synth.isSpeaking)
+     {
+        synth.stopSpeaking(at: AVSpeechBoundary.word)
+     }
+    
       myUtterance = AVSpeechUtterance(string: text)
       myUtterance.rate = 0.4
       synth.speak(myUtterance)
@@ -377,6 +508,8 @@ class ViewController: UIViewController {
 
   override func viewWillDisappear(_ animated: Bool) {
     cameraCapture.stopSession()
+    
+    textToSpeech("Ending Workout")
   }
 
   override func viewDidLayoutSubviews() {
@@ -390,6 +523,8 @@ class ViewController: UIViewController {
     {
         if (isCounting)
         {
+            saveSet()
+            
             isCounting = false
             numSet += 1
             repCount = 0
@@ -397,12 +532,14 @@ class ViewController: UIViewController {
             textToSpeech("Take a break")
             
             playButton.setImage(UIImage(named: "play_button.png")!, for: .normal)
+            
+            compensationFactors()
         }
         else
         {
             isCounting = true
             workoutDisplayName = (schema?.getCurrentExerName(numSet - backwardStep))!
-            textToSpeech("Let's Go: " + (workoutDisplayName))
+            textToSpeech("Let's do some: " + (workoutDisplayName))
 
             playButton.setImage(UIImage(named: "stop_button.png")!, for: .normal)
             everyStartTime = NSDate.timeIntervalSinceReferenceDate
@@ -425,6 +562,8 @@ class ViewController: UIViewController {
     
     @IBAction func didClickForwards(_ sender: UIButton)
     {
+        saveSet()
+        
         numSet += 1
         repCount = 0
         isCounting = true
@@ -433,10 +572,14 @@ class ViewController: UIViewController {
         everyStartTime = NSDate.timeIntervalSinceReferenceDate
         
         self.playButton.setImage(UIImage(named: "stop_button.png")!, for: .normal)
+        
+        compensationFactors()
     }
     
     @IBAction func didClickBackwards(_ sender: UIButton)
     {
+        saveSet()
+        
         numSet += 1
         backwardStep += 2
         repCount = 0
@@ -446,37 +589,9 @@ class ViewController: UIViewController {
         everyStartTime = NSDate.timeIntervalSinceReferenceDate
         
         self.playButton.setImage(UIImage(named: "stop_button.png")!, for: .normal)
+        
+        compensationFactors()
     }
-    
-  // MARK: Button Actions
-  /*@IBAction func didChangeThreadCount(_ sender: UIStepper) {
-    let changedCount = Int(sender.value)
-    if threadCountLabel.text == changedCount.description {
-      return
-    }
-
-    do {
-      modelDataHandler = try ModelDataHandler(threadCount: changedCount, delegate: delegate)
-    } catch let error {
-      fatalError(error.localizedDescription)
-    }
-    threadCount = changedCount
-    threadCountLabel.text = changedCount.description
-    os_log("Thread count is changed to: %d", threadCount)
-  }
-
-  @IBAction func didChangeDelegate(_ sender: UISegmentedControl) {
-    guard let changedDelegate = Delegates(rawValue: delegatesControl.selectedSegmentIndex) else {
-      fatalError("Unexpected value from delegates segemented controller.")
-    }
-    do {
-      modelDataHandler = try ModelDataHandler(threadCount: threadCount, delegate: changedDelegate)
-    } catch let error {
-      fatalError(error.localizedDescription)
-    }
-    delegate = changedDelegate
-    os_log("Delegate is changed to: %s", delegate.description)
-  }*/
 
   @IBAction func didTapResumeButton(_ sender: Any) {
     cameraCapture.resumeInterruptedSession { complete in
@@ -490,6 +605,83 @@ class ViewController: UIViewController {
     }
   }
 
+  func saveSet()
+  {
+    let documentsDirectoryPathString = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
+    //let usLocale = Locale(identifier: "en_US")
+    
+    let dateFormatter : DateFormatter = DateFormatter()
+    //  dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+    dateFormatter.dateFormat = "yyyy-MMM-dd"
+    let date = Date()
+    let workoutDate = dateFormatter.string(from: date)
+    
+    let documentsDirectoryPath = NSURL(string: documentsDirectoryPathString + "/Tuna/" + workoutDate)!
+
+     let fileManager1 = FileManager.default
+    var isDirectory1: ObjCBool = true
+    
+    if !fileManager1.fileExists(atPath: (documentsDirectoryPath.absoluteString)!, isDirectory: &isDirectory1) {
+        
+        do {
+            try fileManager1.createDirectory(atPath: (documentsDirectoryPath.absoluteString)!, withIntermediateDirectories: true, attributes: nil)
+            print("Directory created")
+        } catch let error as NSError
+        {
+            print (error.localizedDescription)
+        }
+        
+    } else {
+        print("Directory already exists")
+    }
+    
+    let subsub = workoutDisplayName + "-" + String(Int(repCount)) + ".json"
+    let subfile =  String(workoutname!) + "-" + subsub
+    let fileName = String(Int(numSet)) + "-" + subfile
+    let jsonFilePath = documentsDirectoryPath.appendingPathComponent(fileName, isDirectory: false)
+    let fileManager = FileManager.default
+    var isDirectory: ObjCBool = false
+
+    
+    var absolutepath  = jsonFilePath!.absoluteString
+    // creating a .json file in the Documents folder
+    if !fileManager.fileExists(atPath: jsonFilePath!.absoluteString, isDirectory: &isDirectory) {
+        let created = fileManager.createFile(atPath: jsonFilePath!.absoluteString, contents: nil, attributes: nil)
+        if created {
+            print("File created ")
+        } else {
+            print("Couldn't create file")
+        }
+    } else {
+        print("File already exists")
+    }
+    
+    //var _workoutSet = workoutSet.init(repCount: Double, numSet: Double, elapsedTimeDisplay: String,
+    //                             workTimeDisplay: String, workoutDisplayName: String, workoutDate: String, workoutname: String)
+    
+     let _workoutSet = workoutSet(numRepsJSON: repCount, numSetsJSON: numSet, elapsedTimeJSON: elapsedTimeDisplay!, workoutTimeJSON: workTimeDisplay!, workoutNameJSON: workoutDisplayName, workoutDateJSON: workoutDate, routineNameJSON: workoutname!)
+    
+   
+    let jsonEncoder = JSONEncoder()
+    do { let jsonData =  try jsonEncoder.encode(_workoutSet)
+        
+        // Write that JSON to the file created earlier
+        do {
+             //_ =  String(data: jsonData, encoding: String.Encoding.utf16)
+            let file = try FileHandle(forWritingTo: jsonFilePath!)
+            file.write(jsonData)
+            print("JSON data was written to file successfully!")
+        } catch let error as NSError {
+            print("Couldn't write to file: \(error.localizedDescription)")
+        }
+        
+    } catch let error as NSError {
+        print("Couldn't encode to file: \(error.localizedDescription)")
+    }
+    
+    
+  }
+    
   func presentUnableToResumeSessionAlert() {
     let alert = UIAlertController(
       title: "Unable to Resume Session",
@@ -499,6 +691,8 @@ class ViewController: UIViewController {
     alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
 
     self.present(alert, animated: true)
+    
+    
   }
 }
 

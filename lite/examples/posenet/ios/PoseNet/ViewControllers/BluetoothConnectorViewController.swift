@@ -36,6 +36,14 @@ class BluetoothConnectorViewController: UIViewController, UITableViewDelegate, D
         }
             
         blConnector.delegate = self
+    
+            
+        blConnector.searchBluetoothProducts { (error: Error?) in
+            if error != nil {
+                self.showAlert("Search Bluetooth product failed:\(error!)")
+                NSLog("Search Bluetooth product failed:\(error!)")
+            }
+        }
     }
     
     func bluetoothConnector() -> DJIBluetoothProductConnector? {

@@ -8,8 +8,10 @@
 
 import UIKit
 import DJISDK
+import CoreBluetooth
 
-class StartupViewController: UIViewController {
+class StartupViewController: UIViewController, DJIBluetoothProductConnectorDelegate {
+
 
     weak var appDelegate: AppDelegate! = UIApplication.shared.delegate as? AppDelegate
     
@@ -24,6 +26,7 @@ class StartupViewController: UIViewController {
     
     @IBOutlet weak var fullbodyButton : UIButton!
     
+    public var bluetoothProducts = [CBPeripheral]()
     public var workoutName : String?
     
     private let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
@@ -31,15 +34,35 @@ class StartupViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.resetUI()
+        
+
+        productConnect()
+        
+        
+        if isBluetoothProductConnected() {
+          NSLog("Seems Connected")
+        }
+        else
+        {
+            NSLog("Attempting to Connect")
+            self.connectBluetooth()
+        }
+        
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    func bluetoothConnector() -> DJIBluetoothProductConnector? {
+        return DJISDKManager.bluetoothProductConnector()
+    }
+    
+    func productConnect()
+    {
+        
         guard let connectedKey = DJIProductKey(param: DJIParamConnection) else {
             NSLog("Error creating the connectedKey")
             return;
         }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { 
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             DJISDKManager.keyManager()?.startListeningForChanges(on: connectedKey, withListener: self, andUpdate: { (oldValue: DJIKeyedValue?, newValue : DJIKeyedValue?) in
                 if newValue != nil {
                     if newValue!.boolValue {
@@ -63,6 +86,68 @@ class StartupViewController: UIViewController {
                 }
             })
         }
+    }
+    
+    func isBluetoothProductConnected() -> Bool {
+        guard let product = DJISDKManager.product() else {
+            return false;
+        }
+        if (product.model == DJIHandheldModelNameOsmoMobile) {
+            NSLog("Found OSMO")
+            return true;
+        }
+        return false;
+    }
+    
+    func connectBluetooth() -> Void {
+        
+        if self.bluetoothProducts.isEmpty == true {
+            NSLog("List is empty")
+            return
+        }
+        
+        guard let blConnector = self.bluetoothConnector() else {
+            return;
+        }
+        
+        if (!self.bluetoothProducts.isEmpty)
+        {
+            let curSelectedPer = self.bluetoothProducts[0]
+            blConnector.connectProduct(curSelectedPer)
+        }
+        
+    }
+    
+    
+    func connectorDidFindProducts(_ peripherals: [CBPeripheral]?) {
+        guard peripherals != nil else {
+            return;
+        }
+        NSLog("Found Peripherals")
+        self.bluetoothProducts = peripherals!
+        
+        productConnect()
+        
+        self.connectBluetooth()
+        
+    }
+    
+    
+    override func viewWillAppear(_ animated: Bool) {
+        
+        guard let blConnector = bluetoothConnector() else {
+            return;
+        }
+            
+        blConnector.delegate = self
+    
+            
+        blConnector.searchBluetoothProducts { (error: Error?) in
+            if error != nil {
+                NSLog("Search Bluetooth product failed:\(error!)")
+            }
+        }
+    
     }
     
     @IBAction func onClickPrivacyPolicy(_ sender: AnyObject)
@@ -89,7 +174,7 @@ class StartupViewController: UIViewController {
         let workoutname = (sender as! UIButton).title(for: .normal)
         
         guard let viewCon = segue.destination as? ViewController else {return}
-        viewCon.workoutname = workoutname
+        viewCon.workoutname = workoutname!
     }
     
     func resetUI() {
