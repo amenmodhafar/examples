@@ -83,6 +83,7 @@ class ViewController: UIViewController {
   private let synth = AVSpeechSynthesizer()
   private var myUtterance = AVSpeechUtterance(string: "")
     
+    public var workoutRoutine = [workoutSet]()
     public var workoutname: String?
     private var schema: Schema?
     private var exerciseNames: [String]?
@@ -90,8 +91,8 @@ class ViewController: UIViewController {
     
     private var startTime = NSDate.timeIntervalSinceReferenceDate
     private var everyStartTime = NSDate.timeIntervalSinceReferenceDate
-    private var elapsedTimeDisplay: String?
-    private var workTimeDisplay: String?
+    private var elapsedTimeDisplay: String = ""
+    private var workTimeDisplay: String = ""
 
 
   private var centerPoint: CGPoint = CGPoint(x:200.0,y: 160.0)
@@ -160,7 +161,7 @@ class ViewController: UIViewController {
     workoutDisplayName =
         (schema?.getCurrentExerName(numSet))!
     
-    textToSpeech("Let's work out: " + workoutDisplayName)
+    textToSpeech("Let's work out: " + workoutname!)
     
     compensationFactors()
   }
@@ -248,20 +249,20 @@ class ViewController: UIViewController {
 
             if (Dist_x > thresholdDist * 3.0 )
             {
-                gimbalController.MoveGimbalWithSpeed(pitch: 0, yaw: -5.5,roll: 0,delay: 0.2)
+                gimbalController.MoveGimbalWithSpeed(pitch: 0, yaw: -5.5,roll: 0,delay: 0.3)
             }
             else if (Dist_x < -thresholdDist * 3.0 )
             {
-                gimbalController.MoveGimbalWithSpeed(pitch: 0, yaw: 5.5,roll: 0,delay: 0.2)
+                gimbalController.MoveGimbalWithSpeed(pitch: 0, yaw: 5.5,roll: 0,delay: 0.3)
             }
 
-            if (Dist_y > thresholdDist * 5.0 )
+            if (Dist_y > thresholdDist * 4.0 )
             {
-                gimbalController.MoveGimbalWithSpeed(pitch: -5.5, yaw: 0,roll: 0,delay: 0.2)
+                gimbalController.MoveGimbalWithSpeed(pitch: -5.5, yaw: 0,roll: 0,delay: 0.5)
             }
-            else if (Dist_y < -thresholdDist * 3.0 )
+            else if (Dist_y < -thresholdDist * 2.5 )
             {
-                gimbalController.MoveGimbalWithSpeed(pitch: 5.5, yaw: 0,roll: 0,delay: 0.2)
+                gimbalController.MoveGimbalWithSpeed(pitch: 5.5, yaw: 0,roll: 0,delay: 0.3)
             }
         }
         else
@@ -271,22 +272,22 @@ class ViewController: UIViewController {
             let Dist_x = pt!.x - centerPoint.x
             let Dist_y = pt!.y - centerPoint.y
 
-            if (Dist_x > thresholdDist * 2.0 )
+            if (Dist_x > thresholdDist * 1.5 )
             {
-                gimbalController.MoveGimbalWithSpeed(pitch: 0, yaw: -4.5,roll: 0,delay: 0.3)
+                gimbalController.MoveGimbalWithSpeed(pitch: 0, yaw: -4.5,roll: 0,delay: 0.5)
             }
-            else if (Dist_x < -thresholdDist * 2.0 )
+            else if (Dist_x < -thresholdDist * 1.5 )
             {
-                gimbalController.MoveGimbalWithSpeed(pitch: 0, yaw: 4.5,roll: 0,delay: 0.3)
+                gimbalController.MoveGimbalWithSpeed(pitch: 0, yaw: 4.5,roll: 0,delay: 0.5)
             }
 
-            if (Dist_y > thresholdDist * 2.0 )
+            if (Dist_y > thresholdDist * 1.5 )
             {
-                gimbalController.MoveGimbalWithSpeed(pitch: -4.5, yaw: 0,roll: 0,delay: 0.3)
+                gimbalController.MoveGimbalWithSpeed(pitch: -4.5, yaw: 0,roll: 0,delay: 0.5)
             }
-            else if (Dist_y < -thresholdDist * 2.0 )
+            else if (Dist_y < -thresholdDist * 1.5 )
             {
-                gimbalController.MoveGimbalWithSpeed(pitch: 4.5, yaw: 0,roll: 0,delay: 0.3)
+                gimbalController.MoveGimbalWithSpeed(pitch: 4.5, yaw: 0,roll: 0,delay: 0.5)
             }
         }
     }
@@ -376,7 +377,7 @@ class ViewController: UIViewController {
             
             distance = sqrt(pow(pt!.x - centerPoint.x,2) + pow(pt!.y - centerPoint.y,2))
             
-            if (distance < thresholdDist && !awayFlag && !homeFlag && !backhomeFlag)
+            if (distance < thresholdDist * 1.5 && !awayFlag && !homeFlag && !backhomeFlag)
             {
                 homeFlag = true
                 
@@ -509,6 +510,8 @@ class ViewController: UIViewController {
   override func viewWillDisappear(_ animated: Bool) {
     cameraCapture.stopSession()
     
+    saveTotal()
+    
     textToSpeech("Ending Workout")
   }
 
@@ -605,6 +608,77 @@ class ViewController: UIViewController {
     }
   }
 
+  func saveTotal()
+  {
+    let documentsDirectoryPathString = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
+    //let usLocale = Locale(identifier: "en_US")
+    
+    let dateFormatter : DateFormatter = DateFormatter()
+    //  dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+    dateFormatter.dateFormat = "yyyy-MMM-dd"
+    let date = Date()
+    let workoutDate = dateFormatter.string(from: date)
+    
+    let documentsDirectoryPath = NSURL(string: documentsDirectoryPathString + "/Tuna/" + workoutDate)!
+
+     let fileManager1 = FileManager.default
+    var isDirectory1: ObjCBool = true
+    
+    if !fileManager1.fileExists(atPath: (documentsDirectoryPath.absoluteString)!, isDirectory: &isDirectory1) {
+        
+        do {
+            try fileManager1.createDirectory(atPath: (documentsDirectoryPath.absoluteString)!, withIntermediateDirectories: true, attributes: nil)
+            print("Directory created")
+        } catch let error as NSError
+        {
+            print (error.localizedDescription)
+        }
+        
+    } else {
+        print("Directory already exists")
+    }
+    
+    let subfile =  String(workoutname!) + "-" + ".json"
+    let fileName = String(Int(numSet)) + "-" + subfile
+    let jsonFilePath = documentsDirectoryPath.appendingPathComponent(fileName, isDirectory: false)
+    let fileManager = FileManager.default
+    var isDirectory: ObjCBool = false
+
+    
+    let absolutepath  = jsonFilePath!.absoluteString
+    // creating a .json file in the Documents folder
+    if (!absolutepath.isEmpty)
+    {
+    if !fileManager.fileExists(atPath: absolutepath, isDirectory: &isDirectory) {
+        let created = fileManager.createFile(atPath: absolutepath, contents: nil, attributes: nil)
+        if created {
+            print("File created ")
+        } else {
+            print("Couldn't create file")
+        }
+    } else {
+        print("File already exists")
+    }
+    } else {
+        print("Path is invalid")
+    }
+    
+    let jsonEncoder = JSONEncoder()
+    do {
+        
+        let jsonData =  try jsonEncoder.encode(workoutRoutine)
+        
+        // Write that JSON to the file created earlier
+        do {
+            let file = FileHandle(forWritingAtPath: absolutepath)
+            file?.write(jsonData)
+            print("JSON data was written to file successfully!")
+        }
+    } catch let error as NSError {
+        print("Couldn't encode to file: \(error.localizedDescription)")
+    }
+    
+  }
   func saveSet()
   {
     let documentsDirectoryPathString = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
@@ -643,10 +717,12 @@ class ViewController: UIViewController {
     var isDirectory: ObjCBool = false
 
     
-    var absolutepath  = jsonFilePath!.absoluteString
+    let absolutepath  = jsonFilePath!.absoluteString
     // creating a .json file in the Documents folder
-    if !fileManager.fileExists(atPath: jsonFilePath!.absoluteString, isDirectory: &isDirectory) {
-        let created = fileManager.createFile(atPath: jsonFilePath!.absoluteString, contents: nil, attributes: nil)
+    if (!absolutepath.isEmpty)
+    {
+    if !fileManager.fileExists(atPath: absolutepath, isDirectory: &isDirectory) {
+        let created = fileManager.createFile(atPath: absolutepath, contents: nil, attributes: nil)
         if created {
             print("File created ")
         } else {
@@ -655,26 +731,25 @@ class ViewController: UIViewController {
     } else {
         print("File already exists")
     }
+    } else {
+        print("Path is invalid")
+    }
     
-    //var _workoutSet = workoutSet.init(repCount: Double, numSet: Double, elapsedTimeDisplay: String,
-    //                             workTimeDisplay: String, workoutDisplayName: String, workoutDate: String, workoutname: String)
-    
-     let _workoutSet = workoutSet(numRepsJSON: repCount, numSetsJSON: numSet, elapsedTimeJSON: elapsedTimeDisplay!, workoutTimeJSON: workTimeDisplay!, workoutNameJSON: workoutDisplayName, workoutDateJSON: workoutDate, routineNameJSON: workoutname!)
-    
-   
     let jsonEncoder = JSONEncoder()
-    do { let jsonData =  try jsonEncoder.encode(_workoutSet)
+    do {
+        let _workoutSet = workoutSet(numRepsJSON: repCount, numSetsJSON: numSet, elapsedTimeJSON: elapsedTimeDisplay, workoutTimeJSON: workTimeDisplay, workoutNameJSON: workoutDisplayName, workoutDateJSON: workoutDate, routineNameJSON: workoutname!)
+        
+        workoutRoutine.append(_workoutSet)
+        
+        let jsonData =  try jsonEncoder.encode(_workoutSet)
         
         // Write that JSON to the file created earlier
         do {
              //_ =  String(data: jsonData, encoding: String.Encoding.utf16)
-            let file = try FileHandle(forWritingTo: jsonFilePath!)
-            file.write(jsonData)
+            let file = FileHandle(forWritingAtPath: absolutepath)
+            file?.write(jsonData)
             print("JSON data was written to file successfully!")
-        } catch let error as NSError {
-            print("Couldn't write to file: \(error.localizedDescription)")
         }
-        
     } catch let error as NSError {
         print("Couldn't encode to file: \(error.localizedDescription)")
     }

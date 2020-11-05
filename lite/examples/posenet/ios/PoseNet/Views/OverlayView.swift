@@ -66,7 +66,8 @@ class OverlayView: UIView {
         
         var path1 = UIBezierPath()
         path1 = UIBezierPath(ovalIn: CGRect(x: 160, y: 120, width: 80, height: 80))
-        UIColor.init(red: 3, green: 155, blue: 245, alpha: 255).setStroke()
+        //UIColor.init(red: 3, green: 155, blue: 245, alpha: 255).setStroke()
+        UIColor.white.setStroke()
         UIColor.clear.setFill()
         path1.lineWidth = 2
         path1.stroke()

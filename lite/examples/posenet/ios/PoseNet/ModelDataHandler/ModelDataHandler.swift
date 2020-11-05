@@ -180,7 +180,7 @@ class ModelDataHandler {
     }
 
     // Remove the alpha component from the image buffer to get the initialized `Data`.
-    let byteCount =
+    _ =
       Model.input.batchSize
       * Model.input.height * Model.input.width
       * Model.input.channelSize
